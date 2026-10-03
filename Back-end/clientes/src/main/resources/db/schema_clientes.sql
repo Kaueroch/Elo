@@ -1,0 +1,15 @@
+-- Schema da tabela de clientes, identico ao que ja existe no banco crm_kauezao.
+-- O banco em si e criado pelo POSTGRES_DB do docker-compose, entao aqui nao
+-- ha CREATE DATABASE. IF NOT EXISTS torna o script seguro para reexecucao.
+
+CREATE TABLE IF NOT EXISTS clientes (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    conhecido_da_onde VARCHAR(100) NOT NULL,
+    valor_cobrado NUMERIC(10, 2) NOT NULL,
+    data VARCHAR(30) NOT NULL,
+    trabalho_feito TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_clientes_nome ON clientes (LOWER(nome));
+CREATE INDEX IF NOT EXISTS idx_clientes_data ON clientes (data DESC);

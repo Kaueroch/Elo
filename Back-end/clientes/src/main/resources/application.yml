@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: clientes
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:crm_kauezao}
+    username: ${DB_USER:kauezao}
+    password: "${DB_PASSWORD:***REMOVIDO***}"
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:10}
+      connection-timeout: 10000
+
+  jpa:
+    hibernate:
+      # a tabela e criada pelo schema.sql do container do Postgres (ou pelo
+      # banco que ja existe na maquina); o Hibernate nunca altera o schema.
+      ddl-auto: ${JPA_DDL_AUTO:validate}
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          time_zone: UTC
+
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+  error:
+    include-message: always
+
+app:
+  cors:
+    origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:4173}
+
+logging:
+  level:
+    com.CRM.clientes: INFO

@@ -1,0 +1,26 @@
+# Dependencias
+node_modules/
+target/
+dist/
+dist.root/
+
+# Variaveis de ambiente (as .env.example versionadas)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Sistema
+.DS_Store
+Thumbs.db
