@@ -1,0 +1,62 @@
+name: crm_kauezao
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: crm_kauezao_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT_EXTERNAL:-5432}:5432"
+    volumes:
+      - crm_kauezao_pgdata:/var/lib/postgresql/data
+      # Cria a tabela clientes na primeira vez que o volume e inicializado.
+      - ./Back-end/clientes/src/main/resources/db:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./Back-end/clientes
+      dockerfile: Dockerfile
+    container_name: crm_kauezao_api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SERVER_PORT: 8080
+      JPA_DDL_AUTO: validate
+      CORS_ORIGINS: ${CORS_ORIGINS}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+
+  frontend:
+    build:
+      context: ./Front-End
+      dockerfile: Dockerfile
+      args:
+        # Em producao o proprio nginx faz o proxy /api -> backend:8080.
+        VITE_API_URL: /api
+    container_name: crm_kauezao_web
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+
+volumes:
+  crm_kauezao_pgdata:
+    name: crm_kauezao_pgdata
