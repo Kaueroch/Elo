@@ -12,9 +12,10 @@ spring:
 
   jpa:
     hibernate:
-      # a tabela e criada pelo schema.sql do container do Postgres (ou pelo
-      # banco que ja existe na maquina); o Hibernate nunca altera o schema.
-      ddl-auto: ${JPA_DDL_AUTO:validate}
+      # O create das tabelas clientes/usuarios/origens e garantido pelo schema SQL
+      # na primeira subida do Postgres; o update cobre volumes de banco ja
+      # criados antes da autenticacao existir (novas tabelas sao adicionadas).
+      ddl-auto: ${JPA_DDL_AUTO:update}
     open-in-view: false
     properties:
       hibernate:
@@ -31,6 +32,17 @@ server:
 app:
   cors:
     origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:4173}
+
+api:
+  security:
+    token:
+      # Troque em producao; o padrao so serve para desenvolvimento local.
+      secret: ${TOKEN_SECRET:crm-kauezao-dev-secret-1234567890}
+    time:
+      expiration:
+        token:
+          # Validade do token em segundos (24h).
+          secret: ${TOKEN_EXPIRATION_SECONDS:86400}
 
 logging:
   level:
