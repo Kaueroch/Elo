@@ -38,8 +38,10 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       SERVER_PORT: 8080
-      JPA_DDL_AUTO: validate
+      JPA_DDL_AUTO: update
       CORS_ORIGINS: ${CORS_ORIGINS}
+      TOKEN_SECRET: ${TOKEN_SECRET:-dev-secret-rode-em-producao}
+      TOKEN_EXPIRATION_SECONDS: ${TOKEN_EXPIRATION_SECONDS:-86400}
     ports:
       - "${BACKEND_PORT:-8080}:8080"
 
