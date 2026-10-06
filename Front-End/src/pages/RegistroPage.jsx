@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { AlertCircle, CheckCircle2, Eye, EyeOff, Lock, Mail, User } from 'lucide-react'
 import { AuthLayout } from '../components/layout/AuthLayout'
+import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/useToast'
-import { AUTENTICACAO_IMPLEMENTADA, AVISO_REGISTRO } from '../lib/auth'
 
 const ROTULOS_FORCA = ['', 'Fraca', 'Razoavel', 'Boa', 'Forte']
 
@@ -18,6 +18,8 @@ function forcaDaSenha(senha) {
 }
 
 export function RegistroPage() {
+  const { autenticado, registrar } = useAuth()
+  const navegar = useNavigate()
   const toast = useToast()
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
@@ -38,8 +40,10 @@ export function RegistroPage() {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       encontrados.email = 'Informe um e-mail valido.'
     }
-    if (senha.length < 6) {
-      encontrados.senha = 'A senha deve ter pelo menos 6 caracteres.'
+    if (senha.length < 8) {
+      encontrados.senha = 'A senha deve ter pelo menos 8 caracteres.'
+    } else if (senha.length > 15) {
+      encontrados.senha = 'A senha deve ter no maximo 15 caracteres.'
     }
     if (confirmarSenha && senha !== confirmarSenha) {
       encontrados.confirmarSenha = 'As senhas nao conferem.'
@@ -52,21 +56,26 @@ export function RegistroPage() {
     return Object.keys(encontrados).length === 0
   }
 
-  function enviar(evento) {
+  async function enviar(evento) {
     evento.preventDefault()
     if (!validar()) return
 
     setEnviando(true)
-    if (AUTENTICACAO_IMPLEMENTADA) {
-      // Quando existir /api/auth/registro, a chamada real entra aqui.
-      setErroGeral('Endpoint de cadastro ainda nao implementado.')
+    setErroGeral('')
+    try {
+      await registrar({ nome: nome.trim(), email: email.trim(), senha })
+      toast.sucesso('Conta criada. Bem-vindo ao CRM Kauezao!', 'Registro completo')
+      navegar('/dashboard', { replace: true })
+    } catch (erro) {
+      if (erro.campos && Object.keys(erro.campos).length) {
+        setErros(erro.campos)
+      }
+      setErroGeral(erro.message)
       setEnviando(false)
-      return
     }
-
-    toast.erro(AVISO_REGISTRO, 'Cadastro indisponivel')
-    setEnviando(false)
   }
+
+  if (autenticado) return <Navigate to="/dashboard" replace />
 
   const nivel = forcaDaSenha(senha)
   const senhasConferem = Boolean(confirmarSenha) && senha === confirmarSenha
@@ -143,7 +152,7 @@ export function RegistroPage() {
                 setSenha(evento.target.value)
                 setErros((atual) => ({ ...atual, senha: undefined }))
               }}
-              placeholder="Minimo 6 caracteres"
+              placeholder="Minimo 8 caracteres"
               autoComplete="new-password"
               style={{ paddingRight: 40 }}
             />

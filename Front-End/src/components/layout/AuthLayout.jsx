@@ -26,7 +26,7 @@ export function AuthLayout({ tipo, children }) {
   return (
     <div className="auth">
       <aside className="auth__hero">
-        <Link to="/clientes" className="auth__marca">
+        <Link to="/" className="auth__marca">
           <span aria-hidden="true">CK</span>
           <span>CRM Kauezao</span>
         </Link>
@@ -53,9 +53,9 @@ export function AuthLayout({ tipo, children }) {
 
       <div className="auth__painel">
         <div className="auth__form">
-          <Link to="/clientes" className="auth__voltar">
+          <Link to="/" className="auth__voltar">
             <ArrowLeft aria-hidden="true" />
-            Voltar para o painel
+            Voltar para o inicio
           </Link>
           {children}
         </div>
