@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { useAuth } from '../../context/useAuth'
 import { Sidebar } from './Sidebar'
 import { useSidebar } from './useSidebar'
 import { Topbar } from './Topbar'
 
 const TITULOS = {
+  '/dashboard': 'Painel',
   '/clientes': 'Clientes',
+  '/origens': 'Origens',
   '/configuracoes': 'Configuracoes',
   '/login': 'Entrar',
   '/registro': 'Criar conta',
@@ -13,6 +16,7 @@ const TITULOS = {
 
 /** Casca do app: sidebar fixa, topbar e o conteudo da rota. */
 export function AppLayout() {
+  const { autenticado } = useAuth()
   const { colapsada, aberta, alternarColapso, abrirMobile, fecharMobile } = useSidebar()
   const { pathname } = useLocation()
   const [total, setTotal] = useState(null)
@@ -23,6 +27,9 @@ export function AppLayout() {
     window.addEventListener('crm:total-clientes', onTotal)
     return () => window.removeEventListener('crm:total-clientes', onTotal)
   }, [])
+
+  // Rota protegida: sem sessao nao existe painel para mostrar.
+  if (!autenticado) return <Navigate to="/login" replace />
 
   return (
     <div className="app">
