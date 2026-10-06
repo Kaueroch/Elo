@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { AlertCircle, Eye, EyeOff, Lock, Mail } from 'lucide-react'
 import { AuthLayout } from '../components/layout/AuthLayout'
+import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/useToast'
-import { AUTENTICACAO_IMPLEMENTADA, AVISO_LOGIN } from '../lib/auth'
 
 export function LoginPage() {
+  const { autenticado, entrar } = useAuth()
   const navegar = useNavigate()
   const toast = useToast()
   const [email, setEmail] = useState('')
@@ -20,28 +21,32 @@ export function LoginPage() {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       encontrados.email = 'Informe um e-mail valido.'
     }
-    if (senha.length < 6) {
-      encontrados.senha = 'A senha deve ter pelo menos 6 caracteres.'
+    if (senha.length < 8) {
+      encontrados.senha = 'A senha deve ter pelo menos 8 caracteres.'
+    } else if (senha.length > 15) {
+      encontrados.senha = 'A senha deve ter no maximo 15 caracteres.'
     }
     setErros(encontrados)
     return Object.keys(encontrados).length === 0
   }
 
-  function enviar(evento) {
+  async function enviar(evento) {
     evento.preventDefault()
     if (!validar()) return
 
     setEnviando(true)
-    if (AUTENTICACAO_IMPLEMENTADA) {
-      // Cuando existir /api/auth/login, a chamada real entra aqui.
-      setErroGeral('Endpoint de login ainda nao implementado.')
+    setErroGeral('')
+    try {
+      const usuario = await entrar(email.trim(), senha)
+      toast.sucesso(`Bem-vindo de volta, ${usuario.nome}!`, 'Login realizado')
+      navegar('/dashboard', { replace: true })
+    } catch (erro) {
+      setErroGeral(erro.message)
       setEnviando(false)
-      return
     }
-
-    toast.info(AVISO_LOGIN, 'Acesso provisorio')
-    navegar('/clientes')
   }
+
+  if (autenticado) return <Navigate to="/dashboard" replace />
 
   return (
     <AuthLayout tipo="login">
