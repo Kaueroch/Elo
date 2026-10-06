@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { Dialog } from '../ui/Dialog'
+import { origensApi } from '../../lib/api'
 import { hojeIso } from '../../lib/format'
 
 const VAZIO = { nome: '', conhecidoDaOnde: '', valorCobrado: '', data: '', trabalhoFeito: '' }
@@ -67,7 +68,7 @@ function Campo({ id, rotulo, obrigatorio, erro, dica, children }) {
  * O formulario fica num componente proprio porque ele e remontado a cada
  * abertura do dialog: assim os campos nascem limpos sem preciso de efeito.
  */
-function FormularioCliente({ cliente, onFechar, onSalvar }) {
+function FormularioCliente({ cliente, origens, onFechar, onSalvar }) {
   const [valores, setValores] = useState(() => paraValores(cliente))
   const [erros, setErros] = useState({})
   const [erroGeral, setErroGeral] = useState('')
@@ -145,7 +146,13 @@ function FormularioCliente({ cliente, onFechar, onSalvar }) {
               onChange={atualiza('conhecidoDaOnde')}
               placeholder="Indicacao, rede social, etc."
               autoComplete="off"
+              list="origens-sugestao"
             />
+            <datalist id="origens-sugestao">
+              {origens.map((origem) => (
+                <option value={origem.nome} key={origem.id} />
+              ))}
+            </datalist>
           </Campo>
         </div>
 
@@ -202,6 +209,23 @@ function FormularioCliente({ cliente, onFechar, onSalvar }) {
 }
 
 export function ClienteFormDialog({ aberto, cliente, onFechar, onSalvar }) {
+  const [origens, setOrigens] = useState([])
+
+  // Sugestoes do datalist: se a API falhar o formulario segue funcionando sem elas.
+  useEffect(() => {
+    if (!aberto) return undefined
+    let vivo = true
+    origensApi
+      .listar()
+      .then((lista) => {
+        if (vivo) setOrigens(lista)
+      })
+      .catch(() => {})
+    return () => {
+      vivo = false
+    }
+  }, [aberto])
+
   if (!aberto) return null
 
   return (
@@ -211,7 +235,12 @@ export function ClienteFormDialog({ aberto, cliente, onFechar, onSalvar }) {
       titulo={cliente ? 'Editar cliente' : 'Novo cliente'}
       subtitulo={cliente ? cliente.nome : 'Preencha os dados para registrar um atendimento.'}
     >
-      <FormularioCliente cliente={cliente} onFechar={onFechar} onSalvar={onSalvar} />
+      <FormularioCliente
+        cliente={cliente}
+        origens={origens}
+        onFechar={onFechar}
+        onSalvar={onSalvar}
+      />
     </Dialog>
   )
 }
