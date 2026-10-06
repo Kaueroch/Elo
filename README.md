@@ -35,15 +35,16 @@ Para derrubar: `docker compose down`. Para apagar **também** os dados:
 
 ## Banco de dados
 
-O schema da tabela `clientes` foi preservado do projeto Java original
-(`Back-end/clientes/src/main/resources/db/schema_clientes.sql`), e o Spring roda com
-`ddl-auto: validate` — ou seja, ele confere o schema, mas nunca altera a tabela.
+O schema das tabelas `clientes`, `usuarios` e `origens` esta em
+`Back-end/clientes/src/main/resources/db/schema_clientes.sql` (usado quando o volume do
+PostgreSQL ainda nao existe). O Spring roda com `ddl-auto: update` por padrao, entao ele
+cria/ajusta tabelas sozinho caso o volume ja tenha sido criado sem elas.
 
 > O container cria um PostgreSQL novo a partir desse schema, com as mesmas credenciais.
 > Ele **não** importa automaticamente os dados de uma instalação local que você já tenha.
 
 Variáveis usadas pela API: `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`,
-`SERVER_PORT`, `JPA_DDL_AUTO`, `CORS_ORIGINS`.
+`SERVER_PORT`, `JPA_DDL_AUTO`, `CORS_ORIGINS`, `TOKEN_SECRET`, `TOKEN_EXPIRATION_SECONDS`.
 
 ## API
 
@@ -55,7 +56,24 @@ Variáveis usadas pela API: `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS
 | PUT    | `/api/clientes/{id}`| `200` / `400` / `404`             |
 | DELETE | `/api/clientes/{id}`| `204` / `404`                     |
 
-Erros saem no formato:
+## Autenticação
+
+Conta e sessão com JWT (BCrypt + Spring Security). Fora de `/api/auth/*` e `/api/health`,
+todo endpoint exige o cabeçalho `Authorization: Bearer <token>`.
+
+| Metodo | Rota                  | Resposta                                             |
+| ------ | --------------------- | ---------------------------------------------------- |
+| POST   | `/api/auth/registro`  | `201` `{ "mensagem": ... }` / `400` / `409` (e-mail) |
+| POST   | `/api/auth/login`     | `200` `{ token, nome, email }` / `400` / `401`       |
+| GET    | `/api/auth/perfil`    | `200` `{ id, nome, email }`                          |
+| PUT    | `/api/auth/perfil`    | `200` — corpo `{ nome }` e/ou `{ senhaAtual, senhaNova }` |
+| GET    | `/api/origens`        | `200` lista de origens                               |
+| POST   | `/api/origens`        | `201` / `400` / `409`                                |
+| DELETE | `/api/origens/{id}`   | `204` / `404`                                        |
+
+As origens são as categorias usadas como sugestão no campo "conhecido de onde" do cliente.
+A senha deve ter entre 8 e 15 caracteres. Erros seguem o formato abaixo, e o `campos` é
+consumido pelo front para apontar o erro no input exato:
 
 ```json
 {
@@ -65,8 +83,6 @@ Erros saem no formato:
   "campos": { "valorCobrado": "Por favor preencha o campo com valores positivos." }
 }
 ```
-
-O `campos` e consumido pelo front para apontar o erro no input exato.
 
 ## Rodando sem Docker
 
@@ -90,14 +106,22 @@ npm run dev
 ## Testes
 
 ```bash
-cd Back-end/clientes && mvn test     # 19 testes (10 service + 9 controller)
+cd Back-end/clientes && mvn test     # 24 testes (services + controllers)
 cd Front-End        && npm run lint && npm run build
 ```
 
-## Autenticação (pendente)
+## Painel do CRM
 
-As telas de Login e Registro são apenas interface: **não existe** `/api/auth/login`,
-`/api/auth/registro` nem tabela de usuários no backend, porque o escopo era reaproveitar
-apenas o banco de clientes existente. A flag `AUTENTICACAO_IMPLEMENTADA` em
-`Front-End/src/lib/auth.js` centraliza esse aviso e é o ponto de partida quando a
-autenticação for implementada.
+Rotas da SPA (React Router):
+
+| Rota               | Acesso          | Descricao                                      |
+| ------------------ | --------------- | ---------------------------------------------- |
+| `/`                | publico         | Landing page de vendas do CRM                  |
+| `/login` / `/registro` | publico     | Entrar / criar conta                           |
+| `/dashboard`       | autenticado     | Painel: total ganho (soma de `valorCobrado`)   |
+| `/clientes`        | autenticado     | CRUD de clientes atendidos                     |
+| `/origens`         | autenticado     | Categorias de "conhecido de onde"              |
+| `/configuracoes`   | autenticado     | Perfil: nome e troca de senha                  |
+
+A sessão fica no `localStorage` (`crm:token`, `crm:usuario`); um JWT vencido (401) encerra
+a sessão e devolve a tela de login automaticamente.
