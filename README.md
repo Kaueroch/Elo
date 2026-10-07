@@ -23,12 +23,12 @@ docker compose ps         # os 3 servicos devem ficar "healthy"
 | Servico   | URL                    | Observacao                          |
 | --------- | ---------------------- | ----------------------------------- |
 | Front-end | http://localhost:3000  | SPA servida pelo nginx              |
-| API       | http://localhost:8081  | `GET/POST/PUT/DELETE /api/clientes` |
+| API       | http://localhost:8080  | `GET/POST/PUT/DELETE /api/clientes` |
 | Banco     | localhost:5433         | `crm_kauezao`                       |
 
 As portas sao definidas no `.env` (`FRONTEND_PORT`, `BACKEND_PORT`, `DB_PORT_EXTERNAL`).
-Os valores padrao ja estao em 3000/8081/5433 porque as portas 8080 e 5432 da maquina
-costumam estar ocupadas; volte para 8080/5432 no `.env` se quiser.
+Os valores padrao estao em 3000/8080/5433 (5433 porque o Postgres local ja ocupa a 5432).
+Atencao: a 8080 e a mesma porta usada pelo backend do Prisma — nao rode os dois ao mesmo tempo.
 
 Para derrubar: `docker compose down`. Para apagar **também** os dados:
 `docker compose down -v`.
@@ -112,16 +112,16 @@ cd Front-End        && npm run lint && npm run build
 
 ## Painel do CRM
 
-Rotas da SPA (React Router):
+Rotas da SPA (roteamento por hash, sem React Router):
 
 | Rota               | Acesso          | Descricao                                      |
 | ------------------ | --------------- | ---------------------------------------------- |
 | `/`                | publico         | Landing page de vendas do CRM                  |
-| `/login` / `/registro` | publico     | Entrar / criar conta                           |
-| `/dashboard`       | autenticado     | Painel: total ganho (soma de `valorCobrado`)   |
-| `/clientes`        | autenticado     | CRUD de clientes atendidos                     |
-| `/origens`         | autenticado     | Categorias de "conhecido de onde"              |
-| `/configuracoes`   | autenticado     | Perfil: nome e troca de senha                  |
+| `/#/login` / `/#/registro` | publico | Entrar / criar conta                          |
+| `/#/dashboard`     | autenticado     | Painel: total ganho (soma de `valorCobrado`)   |
+| `/#/clientes`      | autenticado     | CRUD de clientes atendidos                     |
+| `/#/origens`       | autenticado     | Categorias de "conhecido de onde"              |
+| `/#/configuracoes` | autenticado     | Perfil: nome e troca de senha                  |
 
 A sessão fica no `localStorage` (`crm:token`, `crm:usuario`); um JWT vencido (401) encerra
 a sessão e devolve a tela de login automaticamente.
