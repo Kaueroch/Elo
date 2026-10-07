@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, useMemo, useCallback, type ReactNod
 import { Cliente, ClientePayload, Origem } from '../shared/types';
 import { clientesApi } from '../shared/services/clientesApi';
 import { origensApi } from '../shared/services/origensApi';
+import { TOKEN_STORAGE_KEY } from '../shared/services/api';
 
 interface CrmContextType {
   clientes: Cliente[];
@@ -31,7 +32,16 @@ export function CrmProvider({ children }: CrmProviderProps) {
   const [error, setError] = useState<string | null>(null);
 
   // Carrega clientes e origens do back-end; nada fica preso no navegador.
+  // Sem token (landing, login, registro) nao se busca nada: a API so devolveria
+  // 401 "e preciso estar autenticado" e a tela publica nao usa esses dados.
   const recarregar = useCallback(async () => {
+    if (!localStorage.getItem(TOKEN_STORAGE_KEY)) {
+      setClientes([]);
+      setOrigens([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
