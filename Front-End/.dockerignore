@@ -1,10 +1,7 @@
 node_modules
 dist
-dist.root
 .git
 .gitignore
+*.md
 .env
-.env.local
-Dockerfile
-README.md
-*.log
+.env.*

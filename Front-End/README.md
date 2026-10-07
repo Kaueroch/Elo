@@ -1,0 +1,114 @@
+# CRM Kauezao — Front-End
+
+Frontend do **CRM Kauezao**: landing page, autenticação e painel de gestão de clientes em modo escuro (login, registro, dashboard, clientes, origens e configurações), consumindo a API Spring Boot do monorepo.
+
+## Interface
+
+### Landing Page + Autenticação
+Landing com identidade dark e rotas públicas de **login** e **registro** (JWT + Bcrypt no backend). Ao entrar, o usuário cai direto no painel.
+
+### Dashboard
+Total ganho, clientes no mês, ticket médio, atividade recente e donut de ganhos por origem.
+
+### Clientes
+Lista agrupada por origem, com busca, filtro por origem/mês, adicionar, editar e excluir.
+
+### Origens
+Cadastro e exclusão de origens de clientes (Indicação, Instagram, Google…).
+
+### Configurações
+Edição de nome/senha do perfil e logout.
+
+## Stack Tecnológica
+
+| Camada | Tecnologia |
+|--------|-----------|
+| **UI** | React 19 + TypeScript |
+| **Build** | Vite 6 |
+| **Estilização** | Tailwind CSS 4 + shadcn/ui |
+| **Ícones** | Lucide React |
+| **Gráficos** | Recharts |
+| **Animações** | Motion (Framer Motion) |
+| **Fonte** | Geist Variable |
+
+## Executando Localmente
+
+**Pré-requisitos:** Node.js (ou Docker, para a opção completa com backend + banco).
+
+1. Instale as dependências:
+   ```bash
+   npm install
+   ```
+2. Configure o arquivo `.env` (utilize o `.env.example` como base):
+   ```bash
+   cp .env.example .env
+   ```
+   Em dev, `VITE_PROXY_TARGET` aponta para o backend (padrão `http://localhost:8081`).
+3. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
+   Acesse `http://localhost:3000` (landing em `/`; login em `/#/login`; registro em `/#/registro`).
+
+### Build de produção
+
+```bash
+npm run build       # gera a pasta dist/ (usa VITE_API_URL)
+npm run preview     # serve o build localmente
+```
+
+### Lint
+
+```bash
+npm run lint        # tsc --noEmit
+```
+
+### Docker
+
+```bash
+# Do repositório raiz do monorepo (CRM_kauezao), com backend + banco:
+docker compose up --build -d
+# Frontend publicado em http://localhost:3000 (Nginx) e backend em http://localhost:8081
+```
+
+## Scripts
+
+| Comando | Descrição |
+|---------|-----------|
+| `npm run dev` | Dev server na porta 3000 (proxy `/api`) |
+| `npm run build` | Build de produção (Vite) |
+| `npm run preview` | Serve o build localmente |
+| `npm run lint` | Type check (`tsc --noEmit`) |
+
+## Estrutura de pastas
+
+```
+src/
+├── landing/          # Landing page (components + content)
+├── auth/             # Login, registro e AuthContext
+├── crm/              # CrmContext (clientes/origens) + ClienteFormContext
+├── dashboard/        # Home do painel
+├── clientes/         # Lista e formulário de clientes
+├── origens/          # CRUD de origens
+├── profile/          # Configurações do perfil
+├── layout/           # Sidebar e header do painel
+└── shared/           # Componentes, tipos, serviços e constantes
+```
+
+## Rotas (hash)
+
+| Rota | Acesso | Tela |
+|------|--------|------|
+| `/#/login` | público | Login |
+| `/#/registro` | público | Registro |
+| `/#/dashboard` | autenticado | Dashboard |
+| `/#/clientes` | autenticado | Clientes |
+| `/#/origens` | autenticado | Origens |
+| `/#/configuracoes` | autenticado | Configurações |
+
+## Variáveis de ambiente
+
+| Variável | Descrição | Padrão |
+|----------|-----------|--------|
+| `VITE_API_URL` | Base URL da API (build de produção) | `/api` (proxy do Nginx) |
+| `VITE_PROXY_TARGET` | Alvo do proxy em dev | `http://localhost:8081` |
