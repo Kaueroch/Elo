@@ -114,8 +114,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Define o usuário (isso já atualiza o nome lá em cima no header)
       setUser({ email: data.email ?? email, name: data.nome ?? email, token: data.token });
 
-      // Recarrega a página para o painel montar com a sessão nova
-      window.location.href = '/';
+      // Recarrega a pagina no painel para montar com a sessao nova
+      window.location.href = '/dashboard';
       return null;
     } catch (error) {
       console.error('Erro no login:', error);
@@ -156,8 +156,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     clearStoredSession();
     clearLocalData();
     setUser(null);
-    window.location.hash = '#/login';
-    window.location.reload();
+    window.location.href = '/login';
   };
 
   const value = useMemo(

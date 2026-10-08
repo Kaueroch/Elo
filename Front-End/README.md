@@ -48,7 +48,7 @@ Edição de nome/senha do perfil e logout.
    ```bash
    npm run dev
    ```
-   Acesse `http://localhost:3000` (landing em `/`; login em `/#/login`; registro em `/#/registro`).
+   Acesse `http://localhost:3000` (landing em `/`; login em `/login`; registro em `/registro`).
 
 ### Build de produção
 
@@ -99,12 +99,13 @@ src/
 
 | Rota | Acesso | Tela |
 |------|--------|------|
-| `/#/login` | público | Login |
-| `/#/registro` | público | Registro |
-| `/#/dashboard` | autenticado | Dashboard |
-| `/#/clientes` | autenticado | Clientes |
-| `/#/origens` | autenticado | Origens |
-| `/#/configuracoes` | autenticado | Configurações |
+| `/` | público | Landing page |
+| `/login` | público | Login |
+| `/registro` | público | Registro |
+| `/dashboard` | autenticado | Dashboard |
+| `/clientes` | autenticado | Clientes |
+| `/origens` | autenticado | Origens |
+| `/configuracoes` | autenticado | Configurações |
 
 ## Variáveis de ambiente
 
