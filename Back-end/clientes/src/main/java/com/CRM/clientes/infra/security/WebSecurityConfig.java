@@ -27,8 +27,11 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         // Entradas publicas: criar conta, logar e o healthcheck do Docker.
-                        .requestMatchers("/api/auth/registro", "/api/auth/login").permitAll()
-                        .requestMatchers("/api/health").permitAll()
+                                // Libera totalmente o acesso ao endpoint de registro e login
+                                .requestMatchers("/api/auth/registro").permitAll()
+                                .requestMatchers("/api/auth/login").permitAll()
+                                // Healthcheck do Docker (HEALTHCHECK do Dockerfile do back-end).
+                                .requestMatchers("/api/health").permitAll()
                         // O resto exige um token valido.
                         .anyRequest().authenticated()
                 )
