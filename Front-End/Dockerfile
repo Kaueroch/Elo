@@ -28,7 +28,7 @@ RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # Configura o Nginx para lidar com rotas de Single Page Application (SPA)
-# e para fazer o proxy de /api ate o back-end Spring Boot do CRM.
+# e para fazer o proxy de /api ate o back-end Spring Boot do Elo.
 RUN echo 'server { \
     listen 80; \
     server_name localhost; \

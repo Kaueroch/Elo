@@ -50,7 +50,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
   )
 
   const typewriterDone = useRef(false)
-  const fullSubtitle = "Seu CRM completo. Organize clientes, origens de indicação e faturamento em um só lugar."
+  const fullSubtitle = "Seu Elo completo. Organize clientes, origens de indicação e faturamento em um só lugar."
 
   useEffect(() => {
     if (typewriterDone.current) return
@@ -233,7 +233,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
             title={onBack ? 'Voltar para a página inicial' : undefined}
             className="text-5xl font-bold text-white tracking-tight mb-4 cursor-pointer hover:opacity-80 transition-opacity"
           >
-            CRM Kauezao
+            Elo
           </motion.h1>
 
           <div className="h-14 flex items-center justify-center">
@@ -324,7 +324,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
             <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center">
               <Wallet className="w-6 h-6" />
             </div>
-            <span className="font-bold text-2xl tracking-tight text-white">CRM Kauezao</span>
+            <span className="font-bold text-2xl tracking-tight text-white">Elo</span>
           </motion.div>
 
           <motion.div

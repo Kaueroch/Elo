@@ -39,7 +39,7 @@ function windowFrame(children: ReactNode) {
           <span className="h-2.5 w-2.5 rounded-full bg-zinc-700" />
           <div className="mx-auto flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-1 text-xs text-muted-foreground">
             <span className="h-1 w-1 rounded-full bg-zinc-600" />
-            crm.kauezao.com.br/dashboard
+            elo.kauezao.com.br/dashboard
           </div>
         </div>
         {children}

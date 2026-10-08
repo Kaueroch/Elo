@@ -16,7 +16,7 @@ export const hero = {
   titleTop: 'Seus clientes, organizados.',
   titleAccent: 'Seu faturamento, em dia.',
   subtitle:
-    'O CRM Kauezao junta clientes, origens de indicação e valores cobrados em um painel escuro, rápido e direto ao ponto — sem planilhas soltas e sem burocracia.',
+    'O Elo junta clientes, origens de indicação e valores cobrados em um painel escuro, rápido e direto ao ponto — sem planilhas soltas e sem burocracia.',
   primaryCta: 'Criar conta grátis',
   secondaryCta: 'Ver como funciona',
   trustLine: 'Grátis durante o MVP · Open source · Rode no Docker · Proteção de ponta a ponta',
@@ -36,7 +36,7 @@ export const features = {
   kicker: 'Feito para quem atende e quer acompanhar cada cliente',
   headline: 'Tudo o que uma planilha não te dá, sem a dor de cabeça dela.',
   subtitle:
-    'Em vez de uma grade de atalhos genérica, o CRM Kauezao entrega três módulos que respondem à pergunta que importa: quem são meus clientes e de onde eles vêm?',
+    'Em vez de uma grade de atalhos genérica, o Elo entrega três módulos que respondem à pergunta que importa: quem são meus clientes e de onde eles vêm?',
   items: [
     {
       id: 'ganhos',
@@ -91,7 +91,7 @@ export const pricing = {
   eyebrow: 'Preços',
   kicker: 'Sem tabela de preços escondida. Sem letras miúdas.',
   free: {
-    name: 'CRM Kauezao',
+    name: 'Elo',
     tagline: 'Tudo liberado durante o MVP',
     price: 'R$ 0',
     priceSuffix: 'para sempre, por enquanto',
@@ -103,7 +103,7 @@ export const pricing = {
     cta: 'Criar conta grátis',
     href: '#/registro',
   },
-  note: 'O CRM Kauezao está em desenvolvimento ativo. Se algo quebrar, contamos com você para nos avisar — e o acesso continua grátis.',
+  note: 'O Elo está em desenvolvimento ativo. Se algo quebrar, contamos com você para nos avisar — e o acesso continua grátis.',
 }
 
 export const faq = {
@@ -113,12 +113,12 @@ export const faq = {
     {
       question: 'Os dados dos meus clientes ficam seguros?',
       answer:
-        'Sim. Os dados ficam protegidos de ponta a ponta: a comunicação entre o seu dispositivo e o CRM é segura, e tudo o que você registra fica associado exclusivamente à sua conta, sem compartilhamento com terceiros.',
+        'Sim. Os dados ficam protegidos de ponta a ponta: a comunicação entre o seu dispositivo e o Elo é segura, e tudo o que você registra fica associado exclusivamente à sua conta, sem compartilhamento com terceiros.',
     },
     {
       question: 'Preciso usar cartão de crédito para começar?',
       answer:
-        'Não. O CRM Kauezao é um projeto open source: o código é aberto e basta subir o Docker para usar o sistema na sua própria máquina. Pela plataforma, a conta é gratuita durante o MVP e não pedimos cartão em nenhum momento.',
+        'Não. O Elo é um projeto open source: o código é aberto e basta subir o Docker para usar o sistema na sua própria máquina. Pela plataforma, a conta é gratuita durante o MVP e não pedimos cartão em nenhum momento.',
     },
     {
       question: 'E se eu errar o valor de um atendimento?',
@@ -128,7 +128,7 @@ export const faq = {
     {
       question: 'Preciso conectar ao meu sistema financeiro?',
       answer:
-        'Não. O CRM Kauezao não se conecta a bancos nem a outros sistemas. Você registra seus atendimentos manualmente — o que significa controle total sobre o que entra e de onde vem cada cliente.',
+        'Não. O Elo não se conecta a bancos nem a outros sistemas. Você registra seus atendimentos manualmente — o que significa controle total sobre o que entra e de onde vem cada cliente.',
     },
     {
       question: 'Consigo usar no celular?',
@@ -149,7 +149,7 @@ export const finalCta = {
 
 export const footer = {
   description:
-    'CRM de clientes em modo escuro. Organize atendimentos, origens de indicação e faturamento em um só lugar.',
+    'Gestão de clientes em modo escuro. Organize atendimentos, origens de indicação e faturamento em um só lugar.',
   columns: [
     {
       title: 'Produto',
@@ -168,5 +168,5 @@ export const footer = {
       ],
     },
   ],
-  rights: 'CRM Kauezao © 2026. Todos os direitos reservados.',
+  rights: 'Elo © 2026. Todos os direitos reservados.',
 }

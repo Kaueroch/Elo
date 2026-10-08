@@ -33,10 +33,10 @@ export function AppSidebar({ activeTab, setActiveTab }: AppSidebarProps) {
       <SidebarHeader className="border-b border-sidebar-border pb-4">
         <div className="flex items-center gap-3 px-2 py-1">
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-sidebar-primary text-sidebar-primary-foreground text-sm font-bold">
-            C
+            E
           </div>
           <span className="text-base font-bold tracking-tight truncate group-data-[collapsible=icon]:hidden">
-            CRM Kauezao
+            Elo
           </span>
         </div>
       </SidebarHeader>
