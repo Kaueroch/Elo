@@ -1,12 +1,19 @@
 /**
- * api - Base de todas as chamadas HTTP para o back-end do CRM (Spring Boot)
+ * api - Base de todas as chamadas HTTP para o back-end do Elo (Spring Boot)
  *
  * Autenticação: Bearer token JWT salvo no localStorage (chave: crm:token).
  * Erros seguem o formato do back-end:
  *   { "timestamp": ..., "status": 400, "mensagem": "...", "campos": { campo: "..." } }
  */
 
-const API_URL = import.meta.env.VITE_API_URL ?? '/api';
+/**
+ * Origem da API (vazio = mesma origem: em dev o proxy do Vite e em prod o nginx
+ * encaminham /api para o Spring Boot). Os paths dos services ja trazem o prefixo
+ * /api definido nos controllers (ex.: /api/auth/login), entao um
+ * VITE_API_URL="/api" seria prefixado em duplicidade e viraria /api/api/auth/login.
+ */
+const RAW_API_URL = (import.meta.env.VITE_API_URL ?? '').trim().replace(/\/+$/, '');
+const API_URL = RAW_API_URL.replace(/\/api$/, '');
 
 /** Chave do localStorage onde o token JWT do usuário logado é salvo */
 export const TOKEN_STORAGE_KEY = 'crm:token';
