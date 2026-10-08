@@ -11,7 +11,7 @@ export function Footer() {
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                 <Wallet className="h-4 w-4" />
               </span>
-              <span className="text-base font-bold tracking-tight">CRM Kauezao</span>
+              <span className="text-base font-bold tracking-tight">Elo</span>
             </a>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{footer.description}</p>
           </div>

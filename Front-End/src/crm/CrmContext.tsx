@@ -52,8 +52,8 @@ export function CrmProvider({ children }: CrmProviderProps) {
       setClientes(listaClientes);
       setOrigens(listaOrigens);
     } catch (err) {
-      console.error('Erro ao carregar dados do CRM:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao carregar os dados do CRM.');
+      console.error('Erro ao carregar dados do Elo:', err);
+      setError(err instanceof Error ? err.message : 'Erro ao carregar os dados do Elo.');
     } finally {
       setLoading(false);
     }

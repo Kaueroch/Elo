@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS clientes (
 CREATE INDEX IF NOT EXISTS idx_clientes_nome ON clientes (LOWER(nome));
 CREATE INDEX IF NOT EXISTS idx_clientes_data ON clientes (data DESC);
 
--- Autenticacao: conta unica do dono do CRM. A senha e guardada com hash BCrypt.
+-- Autenticacao: conta unica do dono do Elo. A senha e guardada com hash BCrypt.
 CREATE TABLE IF NOT EXISTS usuarios (
     id UUID PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,

@@ -1,6 +1,6 @@
-# CRM Kauezao — Front-End
+# Elo — Front-End
 
-Frontend do **CRM Kauezao**: landing page, autenticação e painel de gestão de clientes em modo escuro (login, registro, dashboard, clientes, origens e configurações), consumindo a API Spring Boot do monorepo.
+Frontend do **Elo**: landing page, autenticação e painel de gestão de clientes em modo escuro (login, registro, dashboard, clientes, origens e configurações), consumindo a API Spring Boot do monorepo.
 
 ## Interface
 
@@ -95,7 +95,7 @@ src/
 └── shared/           # Componentes, tipos, serviços e constantes
 ```
 
-## Rotas (hash)
+## Rotas
 
 | Rota | Acesso | Tela |
 |------|--------|------|

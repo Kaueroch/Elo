@@ -14,7 +14,7 @@ export function Navbar() {
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Wallet className="h-4 w-4" />
           </span>
-          <span className="text-base font-bold tracking-tight">CRM Kauezao</span>
+          <span className="text-base font-bold tracking-tight">Elo</span>
         </a>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Navegação principal">

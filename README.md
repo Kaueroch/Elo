@@ -1,6 +1,6 @@
-# CRM Kauezao
+# Elo
 
-Monorepo do CRM de clientes atendidos: **back-end Spring Boot** (API REST + PostgreSQL) e
+Monorepo do Elo — gestão de clientes atendidos: **back-end Spring Boot** (API REST + PostgreSQL) e
 **front-end React** (SPA com layout estilo SaaS/Prisma). Tudo sobe com `docker compose up -d`.
 
 ```
@@ -110,13 +110,13 @@ cd Back-end/clientes && mvn test     # 24 testes (services + controllers)
 cd Front-End        && npm run lint && npm run build
 ```
 
-## Painel do CRM
+## Painel do Elo
 
 Rotas da SPA (roteamento por hash, sem React Router):
 
 | Rota               | Acesso          | Descricao                                      |
 | ------------------ | --------------- | ---------------------------------------------- |
-| `/`                | publico         | Landing page de vendas do CRM                  |
+| `/`                | publico         | Landing page de vendas do Elo                   |
 | `/#/login` / `/#/registro` | publico | Entrar / criar conta                          |
 | `/#/dashboard`     | autenticado     | Painel: total ganho (soma de `valorCobrado`)   |
 | `/#/clientes`      | autenticado     | CRUD de clientes atendidos                     |
