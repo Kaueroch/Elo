@@ -6,9 +6,9 @@ export const nav = {
     { label: 'FAQ', href: '#faq' },
   ],
   loginLabel: 'Entrar',
-  loginHref: '#/login',
+  loginHref: '/login',
   ctaLabel: 'Criar conta grátis',
-  ctaHref: '#/registro',
+  ctaHref: '/registro',
 }
 
 export const hero = {
@@ -20,8 +20,8 @@ export const hero = {
   primaryCta: 'Criar conta grátis',
   secondaryCta: 'Ver como funciona',
   trustLine: 'Grátis durante o MVP · Open source · Rode no Docker · Proteção de ponta a ponta',
-  loginHref: '#/login',
-  ctaHref: '#/registro',
+  loginHref: '/login',
+  ctaHref: '/registro',
 }
 
 export const statStrip = [
@@ -101,7 +101,7 @@ export const pricing = {
       'Origens de indicação com cores próprias',
     ],
     cta: 'Criar conta grátis',
-    href: '#/registro',
+    href: '/registro',
   },
   note: 'O Elo está em desenvolvimento ativo. Se algo quebrar, contamos com você para nos avisar — e o acesso continua grátis.',
 }
@@ -144,7 +144,7 @@ export const finalCta = {
   subtitle:
     'Crie sua conta gratuita e cadastre seu primeiro cliente em menos de dez minutos.',
   cta: 'Criar conta grátis',
-  href: '#/registro',
+  href: '/registro',
 }
 
 export const footer = {
@@ -163,8 +163,8 @@ export const footer = {
     {
       title: 'Conta',
       links: [
-        { label: 'Criar conta grátis', href: '#/registro' },
-        { label: 'Entrar', href: '#/login' },
+        { label: 'Criar conta grátis', href: '/registro' },
+        { label: 'Entrar', href: '/login' },
       ],
     },
   ],

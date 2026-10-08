@@ -20,24 +20,39 @@ import { AuthProvider, useAuth } from './auth/AuthContext'
 import type { Tab } from './shared/types'
 
 const PUBLIC_ROUTES: Record<string, 'login' | 'registro'> = {
-  '#/login': 'login',
-  '#/registro': 'registro',
+  '/login': 'login',
+  '/registro': 'registro',
 }
 
-const TAB_HASHES: Record<Tab, string> = {
-  dashboard: '#/dashboard',
-  clientes: '#/clientes',
-  origens: '#/origens',
-  configuracoes: '#/configuracoes',
+const TAB_PATHS: Record<Tab, string> = {
+  dashboard: '/dashboard',
+  clientes: '/clientes',
+  origens: '/origens',
+  configuracoes: '/configuracoes',
+}
+
+/** Caminho atual da URL sem barra no final ("/clientes/" vira "/clientes"). */
+function currentPath(): string {
+  const path = window.location.pathname.replace(/\/+$/, '')
+  return path === '' ? '/' : path
+}
+
+function isTabPath(path: string): boolean {
+  return (Object.values(TAB_PATHS) as string[]).includes(path)
 }
 
 function getPublicRoute() {
-  return PUBLIC_ROUTES[window.location.hash] ?? 'landing'
+  return PUBLIC_ROUTES[currentPath()] ?? 'landing'
 }
 
-function getTabFromHash(): Tab {
-  const entry = Object.entries(TAB_HASHES).find(([hash]) => hash === window.location.hash)
-  return entry ? (entry[1] as Tab) : 'dashboard'
+/**
+ * Aba indicada pela URL. A comparacao usa o VALOR do mapa (a rota), nao a chave:
+ * caminho desconhecido (inclusive a raiz) cai na home do painel.
+ */
+function getTabFromPath(): Tab {
+  const path = currentPath()
+  const entry = Object.entries(TAB_PATHS).find(([, rota]) => rota === path)
+  return entry ? (entry[0] as Tab) : 'dashboard'
 }
 
 function PublicGate() {
@@ -46,13 +61,20 @@ function PublicGate() {
 
   useEffect(() => {
     const onChange = () => setRoute(getPublicRoute())
-    window.addEventListener('hashchange', onChange)
-    return () => window.removeEventListener('hashchange', onChange)
+    window.addEventListener('popstate', onChange)
+    return () => window.removeEventListener('popstate', onChange)
   }, [])
 
+  // Caminho que nao e publico nem de aba volta para a raiz da landing.
+  useEffect(() => {
+    if (!user && route === 'landing' && currentPath() !== '/') {
+      history.replaceState(null, '', '/')
+    }
+  }, [route, user])
+
   const goToLanding = () => {
+    history.pushState(null, '', '/')
     setRoute('landing')
-    history.pushState(null, '', window.location.pathname + window.location.search)
   }
 
   if (user) return <AuthenticatedApp />
@@ -67,20 +89,28 @@ function PublicGate() {
 
 function AuthenticatedApp() {
   const { user } = useAuth()
-  const [activeTab, setActiveTabState] = useState<Tab>(getTabFromHash)
+  const [activeTab, setActiveTabState] = useState<Tab>(getTabFromPath)
   const [showWelcome, setShowWelcome] = useState(() => localStorage.getItem('crm:mostrar-boas-vindas') === 'true')
 
-  // Mantem a aba e a URL em sincronia (#/clientes, #/origens, ...).
+  // Mantem a aba e a URL em sincronia (/clientes, /origens, ...).
   useEffect(() => {
-    const onChange = () => setActiveTabState(getTabFromHash())
-    window.addEventListener('hashchange', onChange)
-    return () => window.removeEventListener('hashchange', onChange)
+    const onChange = () => setActiveTabState(getTabFromPath())
+    window.addEventListener('popstate', onChange)
+    return () => window.removeEventListener('popstate', onChange)
+  }, [])
+
+  // Rota desconhecida (inclusive a raiz) usa a home e corrige a URL.
+  useEffect(() => {
+    if (!isTabPath(currentPath())) {
+      history.replaceState(null, '', TAB_PATHS.dashboard)
+    }
   }, [])
 
   const setActiveTab = (tab: Tab) => {
     setActiveTabState(tab)
-    if (window.location.hash !== TAB_HASHES[tab]) {
-      window.location.hash = TAB_HASHES[tab]
+    const rota = TAB_PATHS[tab]
+    if (currentPath() !== rota) {
+      history.pushState(null, '', rota)
     }
   }
 

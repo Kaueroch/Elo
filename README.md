@@ -112,16 +112,16 @@ cd Front-End        && npm run lint && npm run build
 
 ## Painel do Elo
 
-Rotas da SPA (roteamento por hash, sem React Router):
+Rotas da SPA (roteamento por path, sem React Router):
 
 | Rota               | Acesso          | Descricao                                      |
 | ------------------ | --------------- | ---------------------------------------------- |
 | `/`                | publico         | Landing page de vendas do Elo                   |
-| `/#/login` / `/#/registro` | publico | Entrar / criar conta                          |
-| `/#/dashboard`     | autenticado     | Painel: total ganho (soma de `valorCobrado`)   |
-| `/#/clientes`      | autenticado     | CRUD de clientes atendidos                     |
-| `/#/origens`       | autenticado     | Categorias de "conhecido de onde"              |
-| `/#/configuracoes` | autenticado     | Perfil: nome e troca de senha                  |
+| `/login` / `/registro` | publico     | Entrar / criar conta                          |
+| `/dashboard`       | autenticado     | Painel: total ganho (soma de `valorCobrado`)   |
+| `/clientes`        | autenticado     | CRUD de clientes atendidos                     |
+| `/origens`         | autenticado     | Categorias de "conhecido de onde"              |
+| `/configuracoes`   | autenticado     | Perfil: nome e troca de senha                  |
 
 A sessão fica no `localStorage` (`crm:token`, `crm:usuario`); um JWT vencido (401) encerra
 a sessão e devolve a tela de login automaticamente.

@@ -7,7 +7,7 @@ Você é um Tech Lead e especialista em UX/UI focado no desenvolvimento do front
 - **Framework:** React 19 + TypeScript (Vite), componentes funcionais com hooks e Context API.
 - **Estilização:** Tailwind CSS 4 + componentes shadcn/ui (utilitários).
 - **Ícones:** Lucide Icons (`lucide-react`).
-- **Roteamento:** hash (`#/login`, `#/registro`, `#/dashboard`, `#/clientes`, `#/origens`, `#/configuracoes`).
+- **Roteamento:** path via History API (`/login`, `/registro`, `/dashboard`, `/clientes`, `/origens`, `/configuracoes`).
 
 ## Elo Design System (Strict Rules)
 A identidade visual é fundamental. Nunca desvie das regras abaixo ao gerar ou refatorar componentes:
