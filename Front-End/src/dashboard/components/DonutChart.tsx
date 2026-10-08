@@ -4,9 +4,13 @@ import { formatBRL } from '../../shared/utils/formatters';
 
 interface DonutChartProps {
   data: Array<{ name: string; value: number; color: string; percent?: number }>;
+  /** Como exibir os valores (moeda por padrao; passe numero para contagens). */
+  formatValue?: (value: number) => string;
+  /** Rotulo pequeno sob o total no centro do anel. */
+  centerLabel?: string;
 }
 
-const CustomTooltip = ({ active, payload }: any) => {
+const CustomTooltip = ({ active, payload, formatValue }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
@@ -19,7 +23,7 @@ const CustomTooltip = ({ active, payload }: any) => {
           <p className="text-white/80 font-medium text-sm">{data.name}</p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-white font-bold">{formatBRL(data.value)}</span>
+          <span className="text-white font-bold">{formatValue(data.value)}</span>
           {data.percent !== undefined && (
             <span className="text-white/30 text-xs font-semibold">{data.percent}%</span>
           )}
@@ -30,7 +34,7 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export function DonutChart({ data }: DonutChartProps) {
+export function DonutChart({ data, formatValue = formatBRL, centerLabel = 'Total' }: DonutChartProps) {
   const validData = data.filter(d => d.value > 0);
 
   if (validData.length === 0) {
@@ -50,7 +54,7 @@ export function DonutChart({ data }: DonutChartProps) {
 
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
+          <Tooltip content={<CustomTooltip formatValue={formatValue} />} cursor={{ fill: 'transparent' }} />
           <Pie
             data={validData}
             cx="50%"
@@ -78,10 +82,10 @@ export function DonutChart({ data }: DonutChartProps) {
       {/* Center total */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="flex flex-col items-center gap-1">
-          <span className="text-white/25 text-[10px] uppercase font-bold tracking-[0.15em]">Total</span>
-          <span className="text-white/80 text-lg font-bold tracking-tight leading-none">
-            {formatBRL(totalValue)}
+          <span className="text-white/80 text-2xl font-bold tracking-tight leading-none">
+            {formatValue(totalValue)}
           </span>
+          <span className="text-white/25 text-[10px] uppercase font-bold tracking-[0.15em]">{centerLabel}</span>
         </div>
       </div>
     </div>
