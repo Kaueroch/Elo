@@ -1,4 +1,6 @@
-import { Home, Users, Tags, Settings, LogOut } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Briefcase, CalendarDays, Home, Users, Tags, Settings, LogOut, Wallet, BellRing, ChevronDown, User, Palette, Bell, ShieldCheck } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 import {
   Sidebar,
   SidebarContent,
@@ -9,24 +11,69 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarFooter,
 } from '@/components/ui/sidebar'
-import type { Tab } from '../shared/types'
+import type { Tab, ConfigSection } from '../shared/types'
 import { useAuth } from '../auth/AuthContext'
 
 interface AppSidebarProps {
   activeTab: Tab
   setActiveTab: (tab: Tab) => void
+  configSection: ConfigSection
+  onConfigSection: (section: ConfigSection) => void
 }
 
 const mainItems = [
-  { tab: 'dashboard' as Tab, label: 'Painel', icon: Home },
-  { tab: 'clientes' as Tab, label: 'Clientes', icon: Users },
-  { tab: 'origens' as Tab, label: 'Origens', icon: Tags },
+  { tab: 'dashboard' as Tab, label: 'Painel', icon: Home, badge: null as string | null },
+  { tab: 'clientes' as Tab, label: 'Clientes', icon: Users, badge: null },
+  { tab: 'origens' as Tab, label: 'Origens', icon: Tags, badge: null },
+  { tab: 'agenda' as Tab, label: 'Agenda', icon: CalendarDays, badge: 'Beta' },
 ]
 
-export function AppSidebar({ activeTab, setActiveTab }: AppSidebarProps) {
+const negocioItems = [
+  { tab: 'servicos' as Tab, label: 'Serviços', icon: Briefcase, badge: 'Beta' },
+]
+
+/**
+ * Funções planejadas. Não navegam ainda: aparecem apagadas para ocupar
+ * a sidebar e mostrar o que vem a seguir, sem criar rota quebrada.
+ */
+const emBreveItems = [
+  { label: 'Contas a pagar', desc: 'Vencimentos e dias restantes', icon: Wallet },
+  { label: 'Notificações', desc: 'Avisos no app e por e-mail', icon: BellRing },
+]
+
+const configItems: { id: ConfigSection; label: string; icon: typeof User }[] = [
+  { id: 'perfil', label: 'Perfil', icon: User },
+  { id: 'aparencia', label: 'Aparência', icon: Palette },
+  { id: 'notificacoes', label: 'Notificações', icon: Bell },
+  { id: 'conta', label: 'Conta', icon: ShieldCheck },
+]
+
+export function AppSidebar({ activeTab, setActiveTab, configSection, onConfigSection }: AppSidebarProps) {
   const { logout } = useAuth()
+  const [configOpen, setConfigOpen] = useState(activeTab === 'configuracoes')
+
+  useEffect(() => {
+    if (activeTab === 'configuracoes') setConfigOpen(true)
+  }, [activeTab])
+
+  const toggleConfig = () => {
+    if (activeTab !== 'configuracoes') {
+      onConfigSection(configSection)
+      setConfigOpen(true)
+    } else {
+      setConfigOpen((aberto) => !aberto)
+    }
+  }
+
+  const goToSection = (section: ConfigSection) => {
+    onConfigSection(section)
+    setConfigOpen(true)
+  }
 
   return (
     <Sidebar variant="inset" collapsible="icon">
@@ -54,7 +101,43 @@ export function AppSidebar({ activeTab, setActiveTab }: AppSidebarProps) {
                     tooltip={item.label}
                   >
                     <item.icon />
-                    <span>{item.label}</span>
+                    <span className="flex-1">{item.label}</span>
+                    {item.badge && (
+                      <Badge
+                        variant="secondary"
+                        className="h-4 px-1 text-[9px] font-bold uppercase tracking-wide border-sky-400/20 bg-sky-400/10 text-sky-400 group-data-[collapsible=icon]:hidden"
+                      >
+                        {item.badge}
+                      </Badge>
+                    )}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Negócio</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {negocioItems.map((item) => (
+                <SidebarMenuItem key={item.tab}>
+                  <SidebarMenuButton
+                    isActive={activeTab === item.tab}
+                    onClick={() => setActiveTab(item.tab)}
+                    tooltip={item.label}
+                  >
+                    <item.icon />
+                    <span className="flex-1">{item.label}</span>
+                    {item.badge && (
+                      <Badge
+                        variant="secondary"
+                        className="h-4 px-1 text-[9px] font-bold uppercase tracking-wide border-violet-400/20 bg-violet-400/10 text-violet-300 group-data-[collapsible=icon]:hidden"
+                      >
+                        {item.badge}
+                      </Badge>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -69,14 +152,67 @@ export function AppSidebar({ activeTab, setActiveTab }: AppSidebarProps) {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   isActive={activeTab === 'configuracoes'}
-                  onClick={() => setActiveTab('configuracoes')}
+                  onClick={toggleConfig}
                   tooltip="Configurações"
+                  aria-expanded={configOpen}
                 >
                   <Settings />
-                  <span>Configurações</span>
+                  <span className="flex-1">Configurações</span>
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-200 motion-reduce:transition-none group-data-[collapsible=icon]:hidden ${configOpen ? 'rotate-180' : ''}`}
+                  />
                 </SidebarMenuButton>
+                <div
+                  className={`grid transition-[grid-template-rows,opacity,visibility] duration-200 ease-out motion-reduce:transition-none group-data-[collapsible=icon]:hidden ${configOpen ? 'grid-rows-[1fr] opacity-100 visible' : 'grid-rows-[0fr] opacity-0 invisible'}`}
+                >
+                  <div className="overflow-hidden min-h-0">
+                  <SidebarMenuSub>
+                    {configItems.map((item) => (
+                      <SidebarMenuSubItem key={item.id}>
+                        <SidebarMenuSubButton
+                          isActive={activeTab === 'configuracoes' && configSection === item.id}
+                          onClick={() => goToSection(item.id)}
+                        >
+                          <item.icon />
+                          <span>{item.label}</span>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ))}
+                  </SidebarMenuSub>
+                  </div>
+                </div>
               </SidebarMenuItem>
             </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Em breve</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {emBreveItems.map((item) => (
+                <SidebarMenuItem key={item.label}>
+                  <SidebarMenuButton
+                    disabled
+                    aria-disabled
+                    tooltip={`${item.label} — ${item.desc}`}
+                    className="cursor-not-allowed opacity-55"
+                  >
+                    <item.icon className="opacity-70" />
+                    <span className="flex-1">{item.label}</span>
+                    <Badge
+                      variant="outline"
+                      className="h-4 px-1 text-[9px] font-medium tracking-wide text-muted-foreground border-border bg-transparent group-data-[collapsible=icon]:hidden"
+                    >
+                      Em breve
+                    </Badge>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+            <p className="px-3 pb-1 pt-3 text-xs leading-relaxed text-muted-foreground">
+              Estamos preparando contas a pagar com alertas. Elas aparecem aqui primeiro.
+            </p>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

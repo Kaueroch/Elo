@@ -1,7 +1,6 @@
 # Elo
 
-Monorepo do Elo — gestão de clientes atendidos: **back-end Spring Boot** (API REST + PostgreSQL) e
-**front-end React** (SPA com layout estilo SaaS/Prisma). Tudo sobe com `docker compose up -d`.
+Você gerencia clientes atendidos. O repo junta **back-end Spring Boot** (API REST + PostgreSQL) e **front-end React**. Você sobe tudo com `docker compose up -d`.
 
 ```
 CRM_kauezao/
@@ -121,7 +120,12 @@ Rotas da SPA (roteamento por path, sem React Router):
 | `/dashboard`       | autenticado     | Painel: total ganho (soma de `valorCobrado`)   |
 | `/clientes`        | autenticado     | CRUD de clientes atendidos                     |
 | `/origens`         | autenticado     | Categorias de "conhecido de onde"              |
-| `/configuracoes`   | autenticado     | Perfil: nome e troca de senha                  |
+| `/configuracoes/perfil`       | autenticado | Nome livre; e-mail e senha pedem código       |
+| `/configuracoes/aparencia`    | autenticado | Tema e cor de destaque (neste navegador)      |
+| `/configuracoes/notificacoes` | autenticado | Preferências de aviso (neste navegador)       |
+| `/configuracoes/conta`        | autenticado | Origens, exportar CSV, dados locais, sair     |
+| `/configuracoes/verificar?motivo=` | autenticado | Confere o código de 6 dígitos (Fase 2: back) |
+| `/configuracoes/redefinir?motivo=` | autenticado | Nova senha ou novo e-mail (Fase 2: back) |
 
 A sessão fica no `localStorage` (`crm:token`, `crm:usuario`); um JWT vencido (401) encerra
 a sessão e devolve a tela de login automaticamente.
