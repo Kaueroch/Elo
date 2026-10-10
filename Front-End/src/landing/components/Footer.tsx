@@ -38,7 +38,7 @@ export function Footer() {
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-border pt-6 sm:flex-row sm:items-center">
           <p className="text-xs text-muted-foreground">{footer.rights}</p>
           <p className="text-xs text-muted-foreground">
-            Feito para quem acredita que cuidar da própria carteira de clientes é liberdade.
+            Você cuida da sua carteira de clientes.
           </p>
         </div>
       </div>

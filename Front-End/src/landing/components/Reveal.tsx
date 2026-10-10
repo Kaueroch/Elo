@@ -9,13 +9,14 @@ interface RevealProps {
 
 export function Reveal({ children, delay = 0, className }: RevealProps) {
   const reduce = useReducedMotion()
+  if (reduce) return <div className={className}>{children}</div>
   return (
     <motion.div
       className={className}
-      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
-      whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.55, delay, ease: 'easeOut' }}
+      transition={{ duration: 0.45, delay: Math.min(delay, 0.1), ease: 'easeOut' }}
     >
       {children}
     </motion.div>

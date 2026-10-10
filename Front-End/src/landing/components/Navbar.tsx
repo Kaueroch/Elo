@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowRight, Menu, Wallet, X } from 'lucide-react'
+import { Menu, Wallet, X } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { cn } from '../utils'
 import { nav } from '../content'
@@ -35,7 +35,6 @@ export function Navbar() {
           </Button>
           <Button href={nav.ctaHref} size="sm">
             {nav.ctaLabel}
-            <ArrowRight className="h-3.5 w-3.5" />
           </Button>
         </div>
 
@@ -74,7 +73,6 @@ export function Navbar() {
               </Button>
               <Button href={nav.ctaHref} onClick={() => setOpen(false)}>
                 {nav.ctaLabel}
-                <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
           </nav>

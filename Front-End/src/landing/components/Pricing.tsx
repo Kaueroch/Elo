@@ -7,12 +7,15 @@ export function Pricing() {
   return (
     <section id="precos" className="border-t border-border">
       <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-        <Reveal className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-lime-400/90">{pricing.eyebrow}</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">{pricing.kicker}</h2>
+        <Reveal className="max-w-2xl">
+          <p className="flex items-center gap-3 text-sm text-zinc-500">
+            <span aria-hidden className="h-px w-8 bg-zinc-700" />
+            {pricing.eyebrow}
+          </p>
+          <h2 className="mt-3 max-w-[22ch] text-3xl font-semibold tracking-tight sm:text-4xl">{pricing.kicker}</h2>
         </Reveal>
 
-        <Reveal className="mx-auto mt-12 max-w-md" delay={0.05}>
+        <Reveal className="mt-12 max-w-md" delay={0.05}>
           <div className="relative flex h-full flex-col rounded-2xl border border-border bg-card p-7">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold tracking-tight">{pricing.free.name}</h3>
@@ -41,7 +44,7 @@ export function Pricing() {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <p className="mx-auto mt-8 max-w-xl text-center text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-8 max-w-[60ch] text-sm leading-relaxed text-muted-foreground">
             {pricing.note}
           </p>
         </Reveal>

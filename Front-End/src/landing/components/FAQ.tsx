@@ -12,9 +12,12 @@ export function FAQ() {
   return (
     <section id="faq" className="border-t border-border bg-[#0c0c0c]">
       <div className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6 sm:py-24">
-        <Reveal className="text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-lime-400/90">{faq.eyebrow}</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">{faq.kicker}</h2>
+        <Reveal className="max-w-2xl">
+          <p className="flex items-center gap-3 text-sm text-zinc-500">
+            <span aria-hidden className="h-px w-8 bg-zinc-700" />
+            {faq.eyebrow}
+          </p>
+          <h2 className="mt-3 max-w-[24ch] text-3xl font-semibold tracking-tight sm:text-4xl">{faq.kicker}</h2>
         </Reveal>
 
         <div className="mt-12 space-y-3">

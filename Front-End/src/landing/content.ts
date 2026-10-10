@@ -12,144 +12,143 @@ export const nav = {
 }
 
 export const hero = {
-  badge: 'Gestão de clientes simples e direta',
-  titleTop: 'Seus clientes, organizados.',
-  titleAccent: 'Seu faturamento, em dia.',
+  badge: 'Seu livro-caixa de atendimentos',
+  titleTop: 'Quem indicou, quanto pagou,',
+  titleAccent: 'quando foi.',
   subtitle:
-    'O Elo junta clientes, origens de indicação e valores cobrados em um painel escuro, rápido e direto ao ponto — sem planilhas soltas e sem burocracia.',
+    'Você atende, anota nome, valor, data e quem indicou. No fim do mês você vê de onde veio cada real.',
   primaryCta: 'Criar conta grátis',
   secondaryCta: 'Ver como funciona',
-  trustLine: 'Grátis durante o MVP · Open source · Rode no Docker · Proteção de ponta a ponta',
+  trustLine: 'Grátis no MVP, sem cartão · Só você acessa seus atendimentos',
   loginHref: '/login',
   ctaHref: '/registro',
 }
 
 export const statStrip = [
-  { label: 'Módulos integrados', value: '3' },
-  { label: 'Registrar um atendimento', value: '5 s' },
-  { label: 'Modo claro', value: 'Nunca' },
-  { label: 'Custos escondidos', value: 'Zero' },
+  { label: 'você leva para registrar um atendimento', value: '5 s' },
+  { label: 'você cadastra clientes sem limite', value: '∞' },
+  { label: 'você usa modo claro', value: 'nunca' },
+  { label: 'você paga para começar', value: 'R$ 0' },
 ]
 
 export const features = {
-  eyebrow: 'Recursos',
-  kicker: 'Feito para quem atende e quer acompanhar cada cliente',
-  headline: 'Tudo o que uma planilha não te dá, sem a dor de cabeça dela.',
+  eyebrow: 'Veja o caderno por dentro',
+  kicker: 'Você fecha o mês com três anotações',
   subtitle:
-    'Em vez de uma grade de atalhos genérica, o Elo entrega três módulos que respondem à pergunta que importa: quem são meus clientes e de onde eles vêm?',
+    'Você abre e vê quem atendeu e quanto entrou. Você filtra por quem indicou.',
   items: [
     {
       id: 'ganhos',
       icon: 'chart',
-      title: 'Veja quanto você já faturou',
+      title: 'Você vê quanto entrou por quem indicou',
       description:
-        'Cada atendimento é registrado com valor, data e origem. O painel transforma tudo em um donut de ganhos por origem e uma tabela de atividade recente — você vê o padrão em segundos, não em horas de reconciliação.',
-      highlight: 'Ganhos por origem',
+        'Você anota valor, data e origem em cada atendimento. Depois você filtra por indicação e soma o mês.',
+      highlight: 'Extrato por indicação',
     },
     {
       id: 'origens',
       icon: 'tags',
-      title: 'Origens com a sua cara',
+      title: 'Você sabe de onde veio cada cliente',
       description:
-        'Cadastre de onde vêm seus clientes: indicação de amigos, redes sociais, anúncios. Cada origem aparece com a sua cor no painel e serve de sugestão no cadastro.',
-      highlight: 'Origens em cores próprias',
+        'Você marca Indicação, Instagram, Google. Você pinta cada origem e reutiliza no próximo cadastro.',
+      highlight: 'Origens com cor própria',
     },
     {
       id: 'registro',
       icon: 'plus',
-      title: 'Registre em segundos',
+      title: 'Você anota no balcão em segundos',
       description:
-        'Nome, valor cobrado, data e origem. O painel atualiza o total ganho, o donut e a atividade recente na hora.',
-      highlight: 'Atendimento rápido',
+        'Você digita nome, valor, data e origem. Você confere o total na hora, até no celular.',
+      highlight: 'Cadastro de balcão',
     },
   ],
 }
 
 export const howItWorks = {
-  eyebrow: 'Como funciona',
-  kicker: 'Da primeira conta ao painel completo em minutos',
+  eyebrow: 'Como você usa',
+  kicker: 'Você cria a conta e fecha o mês',
   steps: [
     {
-      title: 'Crie sua conta gratuita',
+      title: 'Crie sua conta',
       description:
-        'Cadastro com nome, e-mail e senha. Leva menos de um minuto e não pede cartão de crédito.',
+        'Você informa nome, e-mail e senha. Você leva menos de um minuto e não usa cartão.',
     },
     {
-      title: 'Registre seus atendimentos',
+      title: 'Anote cada atendimento',
       description:
-        'Cada cliente tem nome, valor cobrado, data e origem. Organizado por padrão, sem esforço extra.',
+        'Você anota nome, valor, data e quem indicou. Você escreve como já escreve no caderno.',
     },
     {
-      title: 'Acompanhe tudo no painel',
+      title: 'Feche o mês',
       description:
-        'Total ganho, clientes atendidos, ticket médio e ganhos por origem aparecem já no primeiro acesso.',
+        'Você abre o painel e vê total, ticket médio e a origem que mais rendeu.',
     },
   ],
 }
 
 export const pricing = {
-  eyebrow: 'Preços',
-  kicker: 'Sem tabela de preços escondida. Sem letras miúdas.',
+  eyebrow: 'Preço',
+  kicker: 'Grátis enquanto é MVP',
   free: {
     name: 'Elo',
-    tagline: 'Tudo liberado durante o MVP',
+    tagline: 'Você registra clientes à vontade no caderno completo',
     price: 'R$ 0',
-    priceSuffix: 'para sempre, por enquanto',
+    priceSuffix: 'você entra sem cartão',
     features: [
-      'Painel com total ganho, clientes e ticket médio',
-      'Clientes ilimitados com busca, filtros e edição',
-      'Origens de indicação com cores próprias',
+      'Total do mês e ticket médio por indicação',
+      'Clientes à vontade, com busca e edição',
+      'Origens com cor própria',
     ],
     cta: 'Criar conta grátis',
     href: '/registro',
   },
-  note: 'O Elo está em desenvolvimento ativo. Se algo quebrar, contamos com você para nos avisar — e o acesso continua grátis.',
+  note: 'O Elo está em obra. Se uma página falhar, nos avise. Você mantém acesso grátis enquanto consertamos.',
 }
 
 export const faq = {
-  eyebrow: 'FAQ',
-  kicker: 'Perguntas de quem cuida da própria carteira de clientes costuma fazer',
+  eyebrow: 'Dúvidas de balcão',
+  kicker: 'Leia antes de trocar o caderno',
   items: [
     {
-      question: 'Os dados dos meus clientes ficam seguros?',
+      question: 'Quem vê os dados dos meus clientes?',
       answer:
-        'Sim. Os dados ficam protegidos de ponta a ponta: a comunicação entre o seu dispositivo e o Elo é segura, e tudo o que você registra fica associado exclusivamente à sua conta, sem compartilhamento com terceiros.',
+        'Só você vê seus clientes. Você entra com e-mail e senha e seu token guarda a sessão. Nada sai da sua conta.',
     },
     {
       question: 'Preciso usar cartão de crédito para começar?',
       answer:
-        'Não. O Elo é um projeto open source: o código é aberto e basta subir o Docker para usar o sistema na sua própria máquina. Pela plataforma, a conta é gratuita durante o MVP e não pedimos cartão em nenhum momento.',
+        'Você começa sem cartão. Sua conta segue grátis no MVP. Você roda o código aberto com Docker na sua máquina.',
     },
     {
       question: 'E se eu errar o valor de um atendimento?',
       answer:
-        'Você pode corrigir ou excluir qualquer cliente a qualquer momento. Nada aqui é permanente: as origens também podem ser criadas e excluídas quando você quiser.',
+        'Você corrige ou apaga qualquer atendimento. Você cria e apaga origens quando quiser.',
     },
     {
       question: 'Preciso conectar ao meu sistema financeiro?',
       answer:
-        'Não. O Elo não se conecta a bancos nem a outros sistemas. Você registra seus atendimentos manualmente — o que significa controle total sobre o que entra e de onde vem cada cliente.',
+        'Você anota cada atendimento à mão. Você decide o que entra e de onde veio cada cliente. Você não conecta banco nenhum.',
     },
     {
       question: 'Consigo usar no celular?',
       answer:
-        'Sim. O painel é construído mobile-first e escala para telas grandes. O essencial — cadastrar clientes e checar o total ganho — funciona bem no celular.',
+        'Você abre no celular e no computador. Você cadastra clientes e confere o total ganho no celular.',
     },
   ],
 }
 
 export const finalCta = {
-  kicker: 'Comece hoje',
-  headline: 'Pronto para organizar seus clientes?',
+  kicker: 'Troque o caderno hoje',
+  headline: 'Anote o atendimento de hoje no Elo',
   subtitle:
-    'Crie sua conta gratuita e cadastre seu primeiro cliente em menos de dez minutos.',
+    'Crie a conta e cadastre quem você atendeu hoje. Você vê o total do mês na hora.',
   cta: 'Criar conta grátis',
   href: '/registro',
 }
 
 export const footer = {
   description:
-    'Gestão de clientes em modo escuro. Organize atendimentos, origens de indicação e faturamento em um só lugar.',
+    'Você organiza atendimentos e faturamento por origem no Elo escuro.',
   columns: [
     {
       title: 'Produto',
