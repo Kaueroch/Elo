@@ -82,10 +82,10 @@ export function DonutChart({ data, formatValue = formatBRL, centerLabel = 'Total
       {/* Center total */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="flex flex-col items-center gap-1">
-          <span className="text-white/80 text-2xl font-bold tracking-tight leading-none">
+          <span className="text-white/80 text-2xl font-semibold tracking-tight leading-none tabular-nums">
             {formatValue(totalValue)}
           </span>
-          <span className="text-white/25 text-[10px] uppercase font-bold tracking-[0.15em]">{centerLabel}</span>
+          <span className="text-white/40 text-xs">{centerLabel}</span>
         </div>
       </div>
     </div>

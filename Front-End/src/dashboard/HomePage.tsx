@@ -191,12 +191,12 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
       {/* Metricas */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <Card className="p-5">
-          <span className="text-[13px] font-semibold">Sua meta está incompleta</span>
+          <span className="text-[13px] font-semibold">Sua melhor marca</span>
           <div className="flex items-center gap-3">
             <GoalRing value={pctMeta} />
             <p className="text-xs leading-relaxed text-muted-foreground">
-              Você atingiu <span className="font-semibold text-foreground">{Math.round(pctMeta)}%</span> da
-              sua melhor marca ({formatBRL(melhorMarca)}). Confira seu progresso.
+              Você fez <span className="font-semibold text-foreground">{Math.round(pctMeta)}%</span> da
+              sua melhor marca ({formatBRL(melhorMarca)}).
             </p>
           </div>
         </Card>
@@ -208,7 +208,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
               <Users className="h-4 w-4" />
             </span>
           </div>
-          <div className="text-[28px] font-bold leading-none tracking-tight">{filteredClientes.length}</div>
+          <div className="text-[28px] font-semibold leading-none tracking-tight tabular-nums">{filteredClientes.length}</div>
           <DeltaLine value={deltaPct(filteredClientes.length, prevClientes.length)} />
         </Card>
 
@@ -219,18 +219,18 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
               <Briefcase className="h-4 w-4" />
             </span>
           </div>
-          <div className="text-[28px] font-bold leading-none tracking-tight">{formatBRL(ticketMedio)}</div>
+          <div className="text-[28px] font-semibold leading-none tracking-tight tabular-nums">{formatBRL(ticketMedio)}</div>
           <DeltaLine value={deltaPct(ticketMedio, ticketAnterior)} />
         </Card>
 
-        <Card className="p-5">
+        <Card className="border-lime-400/20 bg-lime-400/[0.03] p-5">
           <div className="flex items-center justify-between">
-            <span className="text-[13px] font-medium text-muted-foreground">Faturamento</span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground">
+            <span className="text-[13px] font-medium text-muted-foreground">Faturamento do mês</span>
+            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-lime-400/20 bg-lime-400/10 text-lime-300">
               <Wallet className="h-4 w-4" />
             </span>
           </div>
-          <div className="text-[28px] font-bold leading-none tracking-tight">{formatBRL(totalGanho)}</div>
+          <div className="text-[28px] font-semibold leading-none tracking-tight tabular-nums text-lime-200">{formatBRL(totalGanho)}</div>
           <DeltaLine value={deltaPct(totalGanho, ganhoAnterior)} />
         </Card>
       </div>
@@ -240,9 +240,8 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
         <Card className="p-5">
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm font-semibold">Clientes por origem</CardTitle>
-            <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => exportarCSV(filteredClientes, nomeArquivo)}>
-              <Download className="h-3 w-3" />
-              Exportar
+            <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground" onClick={() => setActiveTab?.('origens')}>
+              Ver origens
             </Button>
           </div>
           <div className="h-44">
@@ -255,19 +254,19 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           <div className="grid grid-cols-4 gap-2 pt-1">
             {topOrigens.map(o => (
               <div key={o.nome} className="flex flex-col items-center gap-1 min-w-0">
-                <span className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate">
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground truncate">
                   <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: o.cor }} />
                   <span className="truncate">{o.nome}</span>
                 </span>
-                <span className="text-sm font-bold">{o.count}</span>
+                <span className="text-sm font-semibold tabular-nums">{o.count}</span>
               </div>
             ))}
             <div className="flex flex-col items-center gap-1 min-w-0">
-              <span className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <span className="h-1.5 w-1.5 rounded-full shrink-0 bg-white/20" />
                 Outras
               </span>
-              <span className="text-sm font-bold">{outrasCount}</span>
+              <span className="text-sm font-semibold tabular-nums">{outrasCount}</span>
             </div>
           </div>
         </Card>
@@ -285,7 +284,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           </div>
           {recentes.length === 0 ? (
             <div className="py-8 text-center text-sm text-muted-foreground">
-              Nenhum cliente atendido neste mês.
+              Você não atendeu ninguém neste mês.
             </div>
           ) : (
             <div className="flex flex-col gap-2.5">
@@ -315,7 +314,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           </span>
           {statsOrigem.length === 0 ? (
             <div className="py-8 text-center text-sm text-muted-foreground">
-              Sem origens neste mês.
+              Você não tem origens neste mês.
             </div>
           ) : (
             <>
@@ -379,7 +378,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
         </div>
         {recentes.length === 0 ? (
           <div className="py-8 text-center text-sm text-muted-foreground">
-            {busca ? 'Nenhum cliente encontrado.' : 'Nenhum cliente atendido neste mês.'}
+            {busca ? 'Você não achou ninguém com este nome.' : 'Você não atendeu ninguém neste mês.'}
           </div>
         ) : (
           <Table>
