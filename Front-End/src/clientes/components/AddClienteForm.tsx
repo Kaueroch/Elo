@@ -89,10 +89,10 @@ export function AddClienteForm() {
     try {
       if (clienteEmEdicao) {
         await updateCliente(clienteEmEdicao.id, payload)
-        showToast('Cliente atualizado com sucesso.')
+        showToast('Você atualizou o cliente.')
       } else {
         await addCliente(payload)
-        showToast('Cliente salvo com sucesso.')
+        showToast('Você salvou o cliente.')
       }
       closeClienteForm()
     } catch (err) {

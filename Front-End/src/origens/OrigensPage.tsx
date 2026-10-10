@@ -85,7 +85,7 @@ export function OrigensPage() {
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Origens</h1>
                 <p className="text-muted-foreground text-xs sm:text-sm mt-1">
-                  Gerencie de onde vêm seus clientes e veja o ganho de cada origem
+                  Você vê de onde vêm seus clientes e quanto cada origem rendeu
                 </p>
               </div>
               <Button onClick={() => setIsAdding(true)} className="w-full sm:w-auto">
@@ -202,7 +202,7 @@ export function OrigensPage() {
             {origens.length === 0 && (
               <Card className="md:col-span-2">
                 <CardContent className="py-12 text-center text-muted-foreground">
-                  Nenhuma origem cadastrada. Crie a primeira para sugerir no formulário de clientes.
+                  Você ainda não cadastrou origens. Crie a primeira.
                 </CardContent>
               </Card>
             )}

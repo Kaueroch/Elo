@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { useAuth } from './AuthContext'
 
 interface AuthPageProps {
@@ -16,6 +16,7 @@ interface AuthPageProps {
 
 export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
   const { login, register } = useAuth()
+  const reduceMotion = useReducedMotion()
 
   const [tab, setTab] = useState<'login' | 'register'>(initialTab)
   const [name, setName] = useState('')
@@ -38,22 +39,25 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
   }, [initialTab])
 
   const particles = useMemo(() =>
-    Array.from({ length: 14 }, () => ({
+    Array.from({ length: 6 }, () => ({
       x: Math.random() * 100,
       y: Math.random() * 100,
-      size: Math.random() * 2.5 + 1,
+      size: Math.random() * 2 + 1,
       duration: Math.random() * 16 + 14,
       delay: Math.random() * 8,
-      xDrift: (Math.random() - 0.5) * 60,
-      yDrift: (Math.random() - 0.5) * 60,
+      xDrift: (Math.random() - 0.5) * 40,
+      yDrift: (Math.random() - 0.5) * 40,
     })), []
   )
 
   const typewriterDone = useRef(false)
-  const fullSubtitle = "Seu Elo completo. Organize clientes, origens de indicação e faturamento em um só lugar."
+  const fullSubtitle = "Você anota nome, valor, data e quem indicou."
 
   useEffect(() => {
-    if (typewriterDone.current) return
+    if (typewriterDone.current || reduceMotion) {
+      if (reduceMotion) setDisplayedText(fullSubtitle)
+      return
+    }
     let i = 0
     const interval = setInterval(() => {
       i++
@@ -168,46 +172,25 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
     >
       {/* Hero */}
       <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center p-12">
-        <motion.div
+        <div
           className="absolute inset-0"
           style={{
             background: 'linear-gradient(135deg, #18181b, #09090b, #000000)',
-            backgroundSize: '200% 200%',
           }}
-          animate={{ backgroundPosition: ['0% 0%', '50% 50%', '0% 0%'] }}
-          transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
         />
 
-        {particles.map((p, i) => (
+        {!reduceMotion && particles.map((p, i) => (
           <motion.div
             key={i}
             className="absolute rounded-full bg-white pointer-events-none"
             style={{ width: p.size, height: p.size, left: `${p.x}%`, top: `${p.y}%` }}
-            animate={{ x: [0, p.xDrift, 0], y: [0, p.yDrift, 0], opacity: [0.03, 0.08, 0.03] }}
+            animate={{ x: [0, p.xDrift, 0], y: [0, p.yDrift, 0], opacity: [0.03, 0.06, 0.03] }}
             transition={{ duration: p.duration, repeat: Infinity, ease: 'easeInOut', delay: p.delay }}
           />
         ))}
 
-        <motion.div
-          animate={{ scale: [1, 1.12, 1], opacity: [0.15, 0.25, 0.15] }}
-          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-lime-400/[0.05] blur-[120px] rounded-full"
-        />
-        <motion.div
-          animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.18, 0.1] }}
-          transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-          className="absolute bottom-[-10%] right-[-10%] w-[450px] h-[450px] bg-white/5 blur-[130px] rounded-full"
-        />
-        <motion.div
-          animate={{ y: [0, -10, 0] }}
-          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[20%] right-[15%] w-[200px] h-[200px] bg-white/[0.04] blur-[80px] rounded-full"
-        />
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-          className="absolute bottom-[25%] left-[10%] w-[250px] h-[250px] bg-white/[0.04] blur-[90px] rounded-full"
-        />
+        <div className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-lime-400/[0.05] blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[450px] h-[450px] bg-white/5 blur-[130px] rounded-full" />
 
         <div className="relative z-10 text-center max-w-md">
           <motion.div
@@ -218,12 +201,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
             title={onBack ? 'Voltar para a página inicial' : undefined}
             className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-8 cursor-pointer"
           >
-            <motion.div
-              animate={{ rotate: [0, -6, 6, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <Wallet className="w-8 h-8 text-white" />
-            </motion.div>
+            <Wallet className="w-8 h-8 text-white" />
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -244,7 +222,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
               className="text-xl text-zinc-400 leading-relaxed"
             >
               {displayedText}
-              {displayedText.length < fullSubtitle.length && (
+              {!reduceMotion && displayedText.length < fullSubtitle.length && (
                 <motion.span
                   animate={{ opacity: [1, 0] }}
                   transition={{ duration: 0.8, repeat: Infinity }}
@@ -276,26 +254,8 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
 
       {/* Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 relative overflow-hidden">
-        {particles.slice(0, 6).map((p, i) => (
-          <motion.div
-            key={`fp-${i}`}
-            className="absolute rounded-full bg-white pointer-events-none"
-            style={{ width: p.size, height: p.size, left: `${p.x}%`, top: `${p.y}%` }}
-            animate={{ x: [0, -p.xDrift, 0], y: [0, -p.yDrift, 0], opacity: [0.02, 0.06, 0.02] }}
-            transition={{ duration: p.duration + 4, repeat: Infinity, ease: 'easeInOut', delay: p.delay + 2 }}
-          />
-        ))}
-
-        <motion.div
-          animate={{ scale: [1, 1.25, 1], opacity: [0.05, 0.1, 0.05] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[-20%] right-[-15%] w-[500px] h-[500px] bg-lime-400/[0.05] blur-[150px] rounded-full"
-        />
-        <motion.div
-          animate={{ scale: [1, 1.35, 1], opacity: [0.03, 0.08, 0.03] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
-          className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-white/5 blur-[120px] rounded-full"
-        />
+        <div className="absolute top-[-20%] right-[-15%] w-[500px] h-[500px] bg-lime-400/[0.05] blur-[150px] rounded-full" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-white/5 blur-[120px] rounded-full" />
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -447,17 +407,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                               animate={{ opacity: 1 }}
                               transition={{ delay: 0.15 }}
                             >
-                              <motion.div
-                                animate={{
-                                  boxShadow: [
-                                    '0 0 0px 0px rgba(255,255,255,0)',
-                                    '0 0 16px -2px rgba(255,255,255,0.04)',
-                                    '0 0 0px 0px rgba(255,255,255,0)',
-                                  ],
-                                }}
-                                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                                className="rounded-md"
-                              >
+                              <div className="rounded-md">
                                 <Button type="submit" disabled={isSubmitting} className="w-full h-9 gap-2 transition-[filter] duration-300 hover:brightness-110">
                                   {isSubmitting ? (
                                     <span className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
@@ -465,7 +415,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                     <>Entrar <ArrowRight className="w-4 h-4" /></>
                                   )}
                                 </Button>
-                              </motion.div>
+                              </div>
                             </motion.div>
                           </form>
                         </motion.div>
@@ -570,17 +520,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                               animate={{ opacity: 1 }}
                               transition={{ delay: 0.2 }}
                             >
-                              <motion.div
-                                animate={{
-                                  boxShadow: [
-                                    '0 0 0px 0px rgba(255,255,255,0)',
-                                    '0 0 16px -2px rgba(255,255,255,0.04)',
-                                    '0 0 0px 0px rgba(255,255,255,0)',
-                                  ],
-                                }}
-                                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                                className="rounded-md"
-                              >
+                              <div className="rounded-md">
                                 <Button type="submit" disabled={isSubmitting} className="w-full h-9 gap-2 transition-[filter] duration-300 hover:brightness-110">
                                   {isSubmitting ? (
                                     <span className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
@@ -592,7 +532,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                     </>
                                   )}
                                 </Button>
-                              </motion.div>
+                              </div>
                             </motion.div>
                           </form>
                         </motion.div>
@@ -620,7 +560,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-red-500">
               <AlertCircle className="w-5 h-5" />
-              Não foi possível continuar
+              Você não conseguiu entrar
             </DialogTitle>
             <DialogDescription className="pt-1">
               {popupMessage}

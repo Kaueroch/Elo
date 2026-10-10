@@ -1,23 +1,23 @@
 # Elo — Front-End
 
-Frontend do **Elo**: landing page, autenticação e painel de gestão de clientes em modo escuro (login, registro, dashboard, clientes, origens e configurações), consumindo a API Spring Boot do monorepo.
+Você roda landing, login e painel escuro. O front consome a API Spring Boot do monorepo.
 
 ## Interface
 
 ### Landing Page + Autenticação
-Landing com identidade dark e rotas públicas de **login** e **registro** (JWT + Bcrypt no backend). Ao entrar, o usuário cai direto no painel.
+Você apresenta o produto e cria conta. Você entra com login e abre o painel.
 
 ### Dashboard
-Total ganho, clientes no mês, ticket médio, atividade recente e donut de ganhos por origem.
+Você vê total ganho, clientes do mês, ticket médio e ganhos por origem.
 
 ### Clientes
-Lista agrupada por origem, com busca, filtro por origem/mês, adicionar, editar e excluir.
+Você busca e filtra por origem e mês. Você adiciona, edita e apaga.
 
 ### Origens
-Cadastro e exclusão de origens de clientes (Indicação, Instagram, Google…).
+Você cadastra e apaga origens como Indicação e Instagram.
 
 ### Configurações
-Edição de nome/senha do perfil e logout.
+Você troca nome e senha e sai.
 
 ## Stack Tecnológica
 

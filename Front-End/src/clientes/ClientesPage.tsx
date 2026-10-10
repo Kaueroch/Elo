@@ -87,7 +87,7 @@ export function ClientesPage() {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Clientes</h1>
-          <p className="text-muted-foreground text-sm mt-1">Todos os seus clientes atendidos centralizados em um só lugar.</p>
+          <p className="text-muted-foreground text-sm mt-1">Você vê quem atendeu e quanto cobrou.</p>
         </div>
         <Button onClick={() => openClienteForm()}>
           <Plus className="mr-2 h-4 w-4" />
@@ -135,7 +135,7 @@ export function ClientesPage() {
       {origemGroups.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
-            Nenhum cliente encontrado.
+            Você não achou ninguém com este filtro.
           </CardContent>
         </Card>
       ) : (
