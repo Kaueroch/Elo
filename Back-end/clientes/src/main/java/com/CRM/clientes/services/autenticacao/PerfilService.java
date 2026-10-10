@@ -3,6 +3,7 @@ package com.CRM.clientes.services.autenticacao;
 import com.CRM.clientes.domain.Usuario;
 import com.CRM.clientes.dtos.request.PerfilRequest;
 import com.CRM.clientes.dtos.response.PerfilResponse;
+import com.CRM.clientes.infra.customExceptions.EmailJaCadastrado;
 import com.CRM.clientes.infra.customExceptions.PreenchaCamposCorretamenteException;
 import com.CRM.clientes.infra.security.Security;
 import com.CRM.clientes.repository.UsuarioRepository;
@@ -38,6 +39,24 @@ public class PerfilService {
 
         if (request.nome() != null && !request.nome().trim().isEmpty()) {
             usuario.setNome(request.nome().trim());
+        }
+
+        boolean trocandoEmail = request.email() != null
+                && !request.email().trim().isEmpty()
+                && !request.email().trim().equals(usuario.getEmail());
+        if (trocandoEmail) {
+            // Troca de e-mail exige confirmacao com a senha atual (erro 400
+            // para nao derrubar a sessao do usuario).
+            if (request.senhaAtual() == null || request.senhaAtual().isEmpty()
+                    || !security.passwordEncoder().matches(request.senhaAtual(), usuario.getSenha())) {
+                throw new PreenchaCamposCorretamenteException("Informe a sua senha atual corretamente para trocar o e-mail.");
+            }
+            String novoEmail = request.email().trim();
+            Usuario.validarEmail(novoEmail);
+            if (usuarioRepository.existsByEmail(novoEmail)) {
+                throw new EmailJaCadastrado("Email ja cadastrado.");
+            }
+            usuario.setEmail(novoEmail);
         }
 
         boolean trocandoSenha = request.senhaNova() != null && !request.senhaNova().isEmpty();
