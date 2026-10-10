@@ -94,9 +94,12 @@ export function Features() {
     <section id="recursos" className="relative border-t border-border">
       <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
         <Reveal className="max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-widest text-lime-400/90">{features.eyebrow}</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">{features.kicker}</h2>
-          <p className="mt-4 text-muted-foreground leading-relaxed">{features.subtitle}</p>
+          <p className="flex items-center gap-3 text-sm text-zinc-500">
+            <span aria-hidden className="h-px w-8 bg-zinc-700" />
+            {features.eyebrow}
+          </p>
+          <h2 className="mt-3 max-w-[22ch] text-3xl font-semibold tracking-tight sm:text-4xl">{features.kicker}</h2>
+          <p className="mt-4 max-w-[60ch] leading-relaxed text-muted-foreground">{features.subtitle}</p>
         </Reveal>
 
         <div className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-3">

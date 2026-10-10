@@ -1,4 +1,4 @@
-import { ArrowRight, Check, CirclePlay } from 'lucide-react'
+import { ArrowRight, Check } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { DashboardMockup } from './DashboardMockup'
 import { Reveal } from './Reveal'
@@ -21,18 +21,16 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
           >
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-              <span className="h-1.5 w-1.5 rounded-full bg-lime-400" />
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground">
+              <span className="h-1.5 w-1.5 rounded-full bg-zinc-500" />
               {hero.badge}
             </span>
 
-            <h1 className="mt-6 text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.4rem]">
-              {hero.titleTop}
-              <br />
-              <span className="text-muted-foreground">{hero.titleAccent}</span>
+            <h1 className="mt-6 max-w-[16ch] text-4xl font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-[3.4rem]">
+              {hero.titleTop} {hero.titleAccent}
             </h1>
 
-            <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
+            <p className="mt-5 max-w-[52ch] text-base leading-relaxed text-muted-foreground sm:text-lg">
               {hero.subtitle}
             </p>
 
@@ -41,20 +39,19 @@ export function Hero() {
                 {hero.primaryCta}
                 <ArrowRight className="h-4 w-4" />
               </Button>
-              <Button href="#recursos" variant="outline" size="lg">
-                <CirclePlay className="h-4 w-4" />
+              <Button href="#como-funciona" variant="outline" size="lg">
                 {hero.secondaryCta}
               </Button>
             </div>
 
-            <p className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-              <Check className="h-3.5 w-3.5 text-lime-400/90" />
+            <ul className="mt-5 flex flex-col gap-1.5 text-sm text-muted-foreground">
               {hero.trustLine.split('·').map((item) => (
-                <span key={item} className="flex items-center gap-1.5">
+                <li key={item} className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 shrink-0 text-zinc-500" />
                   {item.trim()}
-                </span>
+                </li>
               ))}
-            </p>
+            </ul>
           </motion.div>
 
           <motion.div
@@ -67,11 +64,14 @@ export function Hero() {
         </div>
 
         <Reveal delay={0.2} className="mt-16">
-          <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4">
-            {statStrip.map((s) => (
-              <div key={s.label} className="flex flex-col gap-1 bg-card px-6 py-5">
-                <dt className="order-2 text-xs text-muted-foreground">{s.label}</dt>
-                <dd className="order-1 text-xl font-bold tracking-tight">{s.value}</dd>
+          <dl className="grid grid-cols-2 overflow-hidden rounded-2xl border border-border bg-card md:grid-cols-4">
+            {statStrip.map((s, i) => (
+              <div
+                key={s.label}
+                className={`flex flex-col gap-1 px-6 py-5 text-left ${i > 0 ? 'border-l border-border' : ''} ${i >= 2 ? 'max-md:border-t max-md:border-border' : ''} ${i === 2 ? 'max-md:border-l-0' : ''}`}
+              >
+                <dd className="order-1 text-xl font-semibold tracking-tight tabular-nums">{s.value}</dd>
+                <dt className="order-2 text-[13px] leading-snug text-muted-foreground">{s.label}</dt>
               </div>
             ))}
           </dl>
