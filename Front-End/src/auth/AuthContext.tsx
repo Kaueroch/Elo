@@ -19,6 +19,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<string | null>;
   register: (name: string, email: string, password: string) => Promise<string | null>;
   updateProfile: (payload: AtualizaPerfilPayload) => Promise<string | null>;
+  /** Atualiza nome/e-mail da sessão sem chamar a API (ex.: após redefinir e-mail). */
+  syncPerfil: (perfil: { nome: string; email: string }) => void;
   logout: () => void;
 }
 
@@ -133,14 +135,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  // Atualiza nome e/ou senha da conta. Em caso de sucesso devolve null e o
-  // novo nome ja aparece no header/localStorage.
+  // Atualiza nome, e-mail e/ou senha da conta. Em caso de sucesso devolve null
+  // e o novo nome/e-mail ja aparece no header/localStorage.
   const updateProfile = async (payload: AtualizaPerfilPayload): Promise<string | null> => {
     try {
       const perfil = await authApi.atualizaPerfil(payload);
       setUser((prev) => {
         if (!prev) return prev;
-        const atualizado: User = { ...prev, name: perfil.nome || prev.name };
+        const atualizado: User = {
+          ...prev,
+          name: perfil.nome || prev.name,
+          email: perfil.email || prev.email,
+        };
         localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(atualizado));
         return atualizado;
       });
@@ -159,8 +165,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
     window.location.href = '/login';
   };
 
+  const syncPerfil = (perfil: { nome: string; email: string }) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const atualizado: User = { ...prev, name: perfil.nome || prev.name, email: perfil.email || prev.email };
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(atualizado));
+      return atualizado;
+    });
+  };
+
   const value = useMemo(
-    () => ({ user, login, register, updateProfile, logout }),
+    () => ({ user, login, register, updateProfile, syncPerfil, logout }),
     [user],
   );
 
