@@ -1,131 +1,92 @@
 # Elo
 
-Você gerencia clientes atendidos. O repo junta **back-end Spring Boot** (API REST + PostgreSQL) e **front-end React**. Você sobe tudo com `docker compose up -d`.
+Caderno de ganhos e trabalhos para quem trabalha por conta própria.
 
-```
-CRM_kauezao/
-├── Back-end/clientes/     Spring Boot 4.1 - API REST e JPA
-├── Front-End/             React 19 + Vite 6 (interface)
-├── docker-compose.yml     postgres + backend + frontend
-├── .env                   configuracao local (nao versionada)
-└── .env.example           modelo das variaveis
-```
+Você atende, cobra e, no fim do mês, não sabe quanto entrou. O Elo anota
+cada atendimento e mostra o total no painel.
+
+## Para quem é
+
+Cabeleireiro, manicure, diarista, técnico, freelancer. Quem cobra por
+serviço e não tem tempo para planilha.
+
+O problema não é falta de talento. É falta de registro.
+
+## O que o Elo faz
+
+- Anota o atendimento: nome, data, valor cobrado, trabalho feito, origem.
+- Mostra o faturamento do mês no painel, com comparação ao mês anterior.
+- Calcula ticket médio e melhor marca.
+- Mostra de onde vieram os clientes.
+- Exporta tudo em CSV com um clique.
+- Login com e-mail e senha. Troca de nome, e-mail e senha com código.
+
+## Telas
+
+| Painel | Clientes | Origens |
+|--------|----------|---------|
+| ![Painel](docs/screenshots/painel.png) | ![Clientes](docs/screenshots/clientes.png) | ![Origens](docs/screenshots/origens.png) |
+
+Coloque os prints em `docs/screenshots/`.
 
 ## Como subir
 
+Com Docker:
+
 ```bash
-cp .env.example .env      # ajuste a senha do banco
+cp .env.example .env
 docker compose up -d --build
-docker compose ps         # os 3 servicos devem ficar "healthy"
 ```
 
-| Servico   | URL                    | Observacao                          |
-| --------- | ---------------------- | ----------------------------------- |
-| Front-end | http://localhost:3000  | SPA servida pelo nginx              |
-| API       | http://localhost:8080  | `GET/POST/PUT/DELETE /api/clientes` |
-| Banco     | localhost:5433         | `crm_kauezao`                       |
+| Serviço | URL |
+|---------|-----|
+| Front-end | http://localhost:3000 |
+| API | http://localhost:8080 |
+| Banco | localhost:5433 |
 
-As portas sao definidas no `.env` (`FRONTEND_PORT`, `BACKEND_PORT`, `DB_PORT_EXTERNAL`).
-Os valores padrao estao em 3000/8080/5433 (5433 porque o Postgres local ja ocupa a 5432).
-Atencao: a 8080 e a mesma porta usada pelo backend do Prisma — nao rode os dois ao mesmo tempo.
+Sem Docker:
 
-Para derrubar: `docker compose down`. Para apagar **também** os dados:
-`docker compose down -v`.
+```bash
+cd Back-end/clientes && mvn spring-boot:run
+cd Front-End && npm install && npm run dev
+```
 
-## Banco de dados
+## Rotas
 
-O schema das tabelas `clientes`, `usuarios` e `origens` esta em
-`Back-end/clientes/src/main/resources/db/schema_clientes.sql` (usado quando o volume do
-PostgreSQL ainda nao existe). O Spring roda com `ddl-auto: update` por padrao, entao ele
-cria/ajusta tabelas sozinho caso o volume ja tenha sido criado sem elas.
-
-> O container cria um PostgreSQL novo a partir desse schema, com as mesmas credenciais.
-> Ele **não** importa automaticamente os dados de uma instalação local que você já tenha.
-
-Variáveis usadas pela API: `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`,
-`SERVER_PORT`, `JPA_DDL_AUTO`, `CORS_ORIGINS`, `TOKEN_SECRET`, `TOKEN_EXPIRATION_SECONDS`.
+| Rota | O que faz |
+|------|-----------|
+| `/` | Apresentação do Elo |
+| `/login`, `/registro` | Entrar ou criar conta |
+| `/dashboard` | Painel de ganhos |
+| `/clientes` | Atendimentos |
+| `/origens` | De onde vêm os clientes |
+| `/configuracoes/perfil` | Nome, e-mail, senha |
+| `/configuracoes/conta` | Origens, exportar CSV, sair |
 
 ## API
 
-| Metodo | Rota                | Resposta                          |
-| ------ | ------------------- | --------------------------------- |
-| GET    | `/api/clientes`     | `200` lista                       |
-| GET    | `/api/clientes/{id}`| `200` cliente / `404`             |
-| POST   | `/api/clientes`     | `201` + `Location` / `400`        |
-| PUT    | `/api/clientes/{id}`| `200` / `400` / `404`             |
-| DELETE | `/api/clientes/{id}`| `204` / `404`                     |
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| POST | `/api/auth/registro` | Criar conta |
+| POST | `/api/auth/login` | Entrar |
+| GET, PUT | `/api/auth/perfil` | Ver ou atualizar perfil |
+| GET, POST, DELETE | `/api/clientes` | Atendimentos |
+| GET, POST, DELETE | `/api/origens` | Origens |
 
-## Autenticação
+Erros seguem `{ timestamp, status, mensagem, campos }`. O campo `campos`
+indica qual input falhou.
 
-Conta e sessão com JWT (BCrypt + Spring Security). Fora de `/api/auth/*` e `/api/health`,
-todo endpoint exige o cabeçalho `Authorization: Bearer <token>`.
+## Segurança
 
-| Metodo | Rota                  | Resposta                                             |
-| ------ | --------------------- | ---------------------------------------------------- |
-| POST   | `/api/auth/registro`  | `201` `{ "mensagem": ... }` / `400` / `409` (e-mail) |
-| POST   | `/api/auth/login`     | `200` `{ token, nome, email }` / `400` / `401`       |
-| GET    | `/api/auth/perfil`    | `200` `{ id, nome, email }`                          |
-| PUT    | `/api/auth/perfil`    | `200` — corpo `{ nome }` e/ou `{ senhaAtual, senhaNova }` |
-| GET    | `/api/origens`        | `200` lista de origens                               |
-| POST   | `/api/origens`        | `201` / `400` / `409`                                |
-| DELETE | `/api/origens/{id}`   | `204` / `404`                                        |
+Uso pessoal. Seus dados ficam no seu banco.
 
-As origens são as categorias usadas como sugestão no campo "conhecido de onde" do cliente.
-A senha deve ter entre 8 e 15 caracteres. Erros seguem o formato abaixo, e o `campos` é
-consumido pelo front para apontar o erro no input exato:
+Em produção, defina `TOKEN_SECRET` forte, `DB_PASSWORD` forte,
+`CORS_ORIGINS` com seu domínio e `REGISTRATION_ENABLED=false`.
 
-```json
-{
-  "timestamp": "2026-10-02T18:32:18Z",
-  "status": 400,
-  "mensagem": "Por favor preencha o campo com valores positivos.",
-  "campos": { "valorCobrado": "Por favor preencha o campo com valores positivos." }
-}
-```
+## Em breve
 
-## Rodando sem Docker
+Contas a pagar com lembrete de vencimento.
 
-**Back-end** (precisa de um PostgreSQL com o schema criado):
+## Licença
 
-```bash
-cd Back-end/clientes
-DB_HOST=localhost DB_PORT=5433 DB_NAME=crm_kauezao \
-DB_USER=kauezao DB_PASSWORD='Kaue2904*' mvn spring-boot:run
-```
-
-**Front-end** (Vite com proxy/HMR para a API):
-
-```bash
-cd Front-End
-cp .env.example .env       # VITE_API_URL
-npm install
-npm run dev
-```
-
-## Testes
-
-```bash
-cd Back-end/clientes && mvn test     # 24 testes (services + controllers)
-cd Front-End        && npm run lint && npm run build
-```
-
-## Painel do Elo
-
-Rotas da SPA (roteamento por path, sem React Router):
-
-| Rota               | Acesso          | Descricao                                      |
-| ------------------ | --------------- | ---------------------------------------------- |
-| `/`                | publico         | Landing page de vendas do Elo                   |
-| `/login` / `/registro` | publico     | Entrar / criar conta                          |
-| `/dashboard`       | autenticado     | Painel: total ganho (soma de `valorCobrado`)   |
-| `/clientes`        | autenticado     | CRUD de clientes atendidos                     |
-| `/origens`         | autenticado     | Categorias de "conhecido de onde"              |
-| `/configuracoes/perfil`       | autenticado | Nome livre; e-mail e senha pedem código       |
-| `/configuracoes/aparencia`    | autenticado | Tema e cor de destaque (neste navegador)      |
-| `/configuracoes/notificacoes` | autenticado | Preferências de aviso (neste navegador)       |
-| `/configuracoes/conta`        | autenticado | Origens, exportar CSV, dados locais, sair     |
-| `/configuracoes/verificar?motivo=` | autenticado | Confere o código de 6 dígitos (Fase 2: back) |
-| `/configuracoes/redefinir?motivo=` | autenticado | Nova senha ou novo e-mail (Fase 2: back) |
-
-A sessão fica no `localStorage` (`crm:token`, `crm:usuario`); um JWT vencido (401) encerra
-a sessão e devolve a tela de login automaticamente.
+MIT.

@@ -43,16 +43,6 @@ Fase 1 (front) entregue em 2026-10-10. Falta o back, detalhado em
 - **Regras:** erros de troca sempre `400` (nunca `401`); `trocaToken` no corpo.
 - **Depende de:** SMTP genérico via env.
 
-## 4. Backlog pequeno (sem spec) — `futura`
-
-Placeholders já marcados `Em breve` no app; sem escopo fechado.
-
-| Item | Onde aparece |
-|------|--------------|
-| Tema claro | `/configuracoes/aparencia` |
-| Resumo semanal | `/configuracoes/notificacoes` |
-| Novidades do Elo | `/configuracoes/notificacoes` |
-
 ## Ordem sugerida
 
 1. Verificação Fase 2 (destrava e-mail para tudo).
