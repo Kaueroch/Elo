@@ -19,7 +19,7 @@ export function Pricing() {
           <div className="relative flex h-full flex-col rounded-2xl border border-border bg-card p-7">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold tracking-tight">{pricing.free.name}</h3>
-              <span className="rounded-full bg-lime-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-lime-400 border border-lime-400/25">
+              <span className="rounded-full bg-amber-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-amber-400 border border-amber-400/25">
                 Disponível agora
               </span>
             </div>
@@ -31,7 +31,7 @@ export function Pricing() {
             <ul className="mt-6 flex-1 space-y-3">
               {pricing.free.features.map((f) => (
                 <li key={f} className="flex items-start gap-2.5 text-sm">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-lime-400" />
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
                   <span className="text-muted-foreground">{f}</span>
                 </li>
               ))}

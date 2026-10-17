@@ -102,7 +102,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
     if (/[0-9]/.test(password)) score++
     if (/[^A-Za-z0-9]/.test(password)) score++
     const labels = ['', 'Fraca', 'Média', 'Boa', 'Forte', 'Segura']
-    const colors = ['', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-lime-400', 'bg-lime-400']
+    const colors = ['', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-amber-400', 'bg-amber-400']
     return { score, label: labels[score], color: colors[score], width: `${(score / 5) * 100}%` }
   }, [password])
 
@@ -189,7 +189,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
           />
         ))}
 
-        <div className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-lime-400/[0.05] blur-[120px] rounded-full" />
+        <div className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-amber-400/[0.05] blur-[120px] rounded-full" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[450px] h-[450px] bg-white/5 blur-[130px] rounded-full" />
 
         <div className="relative z-10 text-center max-w-md">
@@ -254,7 +254,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
 
       {/* Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 relative overflow-hidden">
-        <div className="absolute top-[-20%] right-[-15%] w-[500px] h-[500px] bg-lime-400/[0.05] blur-[150px] rounded-full" />
+        <div className="absolute top-[-20%] right-[-15%] w-[500px] h-[500px] bg-amber-400/[0.05] blur-[150px] rounded-full" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-white/5 blur-[120px] rounded-full" />
 
         <motion.div
@@ -334,7 +334,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                           className={`flex items-center gap-2.5 px-4 py-3 rounded-lg text-sm font-medium mb-4 overflow-hidden ${
                             error
                               ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                              : 'bg-lime-400/10 text-lime-400/90 border border-lime-400/20'
+                              : 'bg-amber-400/10 text-amber-400/90 border border-amber-400/20'
                           }`}
                         >
                           {error ? <AlertCircle className="w-4 h-4 shrink-0" /> : <CheckCircle className="w-4 h-4 shrink-0" />}
@@ -371,7 +371,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                     value={field.value}
                                     onChange={e => field.setter(e.target.value)}
                                     className={`pl-9 pr-9 transition-[border-color,box-shadow] duration-300 ${
-                                      field.value && (field.valid ? 'border-lime-400/40' : 'border-red-500/40')
+                                      field.value && (field.valid ? 'border-amber-400/40' : 'border-red-500/40')
                                     }`}
                                   />
                                   <AnimatePresence>
@@ -383,7 +383,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                         className="absolute right-3 top-1/2 -translate-y-1/2"
                                       >
                                         {field.valid ? (
-                                          <CheckCircle className="w-4 h-4 text-lime-400" />
+                                          <CheckCircle className="w-4 h-4 text-amber-400" />
                                         ) : (
                                           <XCircle className="w-4 h-4 text-red-500" />
                                         )}
@@ -447,7 +447,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                     value={field.value}
                                     onChange={e => field.setter(e.target.value)}
                                     className={`pl-9 pr-9 transition-[border-color,box-shadow] duration-300 ${
-                                      field.value && (field.valid ? 'border-lime-400/40' : 'border-red-500/40')
+                                      field.value && (field.valid ? 'border-amber-400/40' : 'border-red-500/40')
                                     }`}
                                   />
                                   <AnimatePresence>
@@ -459,7 +459,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                         className="absolute right-3 top-1/2 -translate-y-1/2"
                                       >
                                         {field.valid ? (
-                                          <CheckCircle className="w-4 h-4 text-lime-400" />
+                                          <CheckCircle className="w-4 h-4 text-amber-400" />
                                         ) : (
                                           <XCircle className="w-4 h-4 text-red-500" />
                                         )}
@@ -503,7 +503,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                     animate={{ height: 'auto', opacity: 1 }}
                                     className="overflow-hidden"
                                   >
-                                    <p className={`text-[11px] flex items-center gap-1 mt-0.5 ${passwordsMatch ? 'text-lime-400' : 'text-red-500'}`}>
+                                    <p className={`text-[11px] flex items-center gap-1 mt-0.5 ${passwordsMatch ? 'text-amber-400' : 'text-red-500'}`}>
                                       {passwordsMatch ? (
                                         <><CheckCircle className="w-3 h-3" /> Senhas conferem</>
                                       ) : (
