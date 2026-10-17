@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Briefcase, CalendarDays, Home, Users, Tags, Settings, LogOut, Wallet, BellRing, ChevronDown, User, Palette, Bell, ShieldCheck } from 'lucide-react'
+import { Home, Users, Tags, Settings, LogOut, Wallet, ChevronDown, User, ShieldCheck } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import {
   Sidebar,
@@ -30,27 +30,15 @@ const mainItems = [
   { tab: 'dashboard' as Tab, label: 'Painel', icon: Home, badge: null as string | null },
   { tab: 'clientes' as Tab, label: 'Clientes', icon: Users, badge: null },
   { tab: 'origens' as Tab, label: 'Origens', icon: Tags, badge: null },
-  { tab: 'agenda' as Tab, label: 'Agenda', icon: CalendarDays, badge: 'Beta' },
-]
-
-const negocioItems = [
-  { tab: 'servicos' as Tab, label: 'Serviços', icon: Briefcase, badge: 'Beta' },
-]
-
-/**
- * Funções planejadas. Não navegam ainda: aparecem apagadas para ocupar
- * a sidebar e mostrar o que vem a seguir, sem criar rota quebrada.
- */
-const emBreveItems = [
-  { label: 'Contas a pagar', desc: 'Vencimentos e dias restantes', icon: Wallet },
-  { label: 'Notificações', desc: 'Avisos no app e por e-mail', icon: BellRing },
 ]
 
 const configItems: { id: ConfigSection; label: string; icon: typeof User }[] = [
   { id: 'perfil', label: 'Perfil', icon: User },
-  { id: 'aparencia', label: 'Aparência', icon: Palette },
-  { id: 'notificacoes', label: 'Notificações', icon: Bell },
   { id: 'conta', label: 'Conta', icon: ShieldCheck },
+]
+
+const emBreveItems = [
+  { label: 'Contas a pagar', desc: 'Vencimentos e dias restantes', icon: Wallet },
 ]
 
 export function AppSidebar({ activeTab, setActiveTab, configSection, onConfigSection }: AppSidebarProps) {
@@ -102,42 +90,6 @@ export function AppSidebar({ activeTab, setActiveTab, configSection, onConfigSec
                   >
                     <item.icon />
                     <span className="flex-1">{item.label}</span>
-                    {item.badge && (
-                      <Badge
-                        variant="secondary"
-                        className="h-4 px-1 text-[9px] font-bold uppercase tracking-wide border-sky-400/20 bg-sky-400/10 text-sky-400 group-data-[collapsible=icon]:hidden"
-                      >
-                        {item.badge}
-                      </Badge>
-                    )}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>Negócio</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {negocioItems.map((item) => (
-                <SidebarMenuItem key={item.tab}>
-                  <SidebarMenuButton
-                    isActive={activeTab === item.tab}
-                    onClick={() => setActiveTab(item.tab)}
-                    tooltip={item.label}
-                  >
-                    <item.icon />
-                    <span className="flex-1">{item.label}</span>
-                    {item.badge && (
-                      <Badge
-                        variant="secondary"
-                        className="h-4 px-1 text-[9px] font-bold uppercase tracking-wide border-violet-400/20 bg-violet-400/10 text-violet-300 group-data-[collapsible=icon]:hidden"
-                      >
-                        {item.badge}
-                      </Badge>
-                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

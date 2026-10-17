@@ -26,9 +26,9 @@ export interface Origem {
   nome: string;
 }
 
-export type Tab = 'dashboard' | 'clientes' | 'origens' | 'agenda' | 'servicos' | 'configuracoes';
+export type Tab = 'dashboard' | 'clientes' | 'origens' | 'configuracoes';
 
-export type ConfigSection = 'perfil' | 'aparencia' | 'notificacoes' | 'conta';
+export type ConfigSection = 'perfil' | 'conta';
 
 /** Motivo da troca com código: senha ou e-mail (nome troca livre na tela). */
 export type ConfigMotivo = 'senha' | 'email';
