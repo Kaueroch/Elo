@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:crm_kauezao}
     username: ${DB_USER:kauezao}
-    password: "${DB_PASSWORD:***REMOVIDO***}"
+    password: "${DB_PASSWORD}"
     hikari:
       maximum-pool-size: ${DB_POOL_SIZE:10}
       connection-timeout: 10000
@@ -24,20 +24,22 @@ spring:
           time_zone: UTC
   web:
     error:
-      include-message: always
+      include-message: never
 
 server:
   port: ${SERVER_PORT:8080}
   shutdown: graceful
 app:
+  registration:
+    enabled: ${REGISTRATION_ENABLED:true}
   cors:
-    origins: ${CORS_ORIGINS:http://localhost:3000,http://localhost:4173}
+    origins: ${CORS_ORIGINS}
 
 api:
   security:
     token:
       # Troque em producao; o padrao so serve para desenvolvimento local.
-      secret: ${TOKEN_SECRET:crm-kauezao-dev-secret-1234567890}
+      secret: ${TOKEN_SECRET}
     time:
       expiration:
         token:
