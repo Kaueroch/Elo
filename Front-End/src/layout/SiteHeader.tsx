@@ -26,8 +26,6 @@ const tabLabels: Record<Tab, string> = {
   dashboard: 'Dashboard',
   clientes: 'Clientes',
   origens: 'Origens',
-  agenda: 'Agenda',
-  servicos: 'Serviços',
   configuracoes: 'Configurações',
 }
 
@@ -58,7 +56,7 @@ export function SiteHeader({ activeTab, setActiveTab, title }: SiteHeaderProps) 
       <div className="flex items-center gap-4 ml-auto">
         <span className="text-sm text-muted-foreground hidden sm:block">
           Total ganho:{' '}
-          <span className="font-semibold text-lime-400/90">
+          <span className="font-semibold text-amber-400/90">
             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalGanho)}
           </span>
         </span>

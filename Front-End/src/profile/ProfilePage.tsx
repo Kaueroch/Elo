@@ -5,14 +5,8 @@ import {
   LogOut,
   Save,
   ShieldCheck,
-  Palette,
-  Bell,
-  Wallet,
   Download,
   Trash2,
-  Moon,
-  Sun,
-  Check,
   KeyRound,
   Mail,
 } from 'lucide-react'
@@ -21,7 +15,6 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
 import { useAuth } from '../auth/AuthContext'
 import { useCrm } from '../crm/useCrm'
 import { useToast } from '../shared/components/Toast'
@@ -181,243 +174,6 @@ function PerfilSection({ onTrocaSolicitada }: { onTrocaSolicitada?: (motivo: Con
 }
 
 // ---------------------------------------------------------------------------
-// Tela: Aparência (scaffold — TODO(dev): aplicar tema de verdade)
-// ---------------------------------------------------------------------------
-
-const ACCENTS = [
-  { id: 'lime', label: 'Lima', className: 'bg-lime-400' },
-  { id: 'emerald', label: 'Esmeralda', className: 'bg-emerald-400' },
-  { id: 'sky', label: 'Céu', className: 'bg-sky-400' },
-  { id: 'violet', label: 'Violeta', className: 'bg-violet-400' },
-  { id: 'orange', label: 'Laranja', className: 'bg-orange-400' },
-] as const
-
-function AparenciaSection() {
-  const [accent, setAccent] = useState<string>(
-    () => localStorage.getItem('crm:accent') ?? 'lime',
-  )
-  const { showToast } = useToast()
-
-  const escolher = (id: string) => {
-    setAccent(id)
-    localStorage.setItem('crm:accent', id)
-    // TODO(dev): aplicar a cor de destaque no CSS (variável --accent) quando for implementar.
-    showToast('Cor salva.')
-  }
-
-  return (
-    <div className="space-y-4">
-      <div>
-        <h2 className="text-xl font-semibold tracking-tight">Aparência</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Você ajusta o visual do Elo neste navegador.
-        </p>
-      </div>
-      <Card>
-        <CardContent className="p-5 sm:p-6 space-y-4">
-          <div>
-            <h4 className="font-semibold text-sm flex items-center gap-2">
-              <Palette className="w-4 h-4 text-muted-foreground" />
-              Tema
-            </h4>
-            <p className="text-sm text-muted-foreground mt-1">
-              Você usa o Elo no modo escuro.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              className="flex items-center gap-3 rounded-xl border border-ring bg-muted/40 p-4 text-left"
-            >
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-950 border border-zinc-800">
-                <Moon className="h-4 w-4" />
-              </span>
-              <span>
-                <span className="block text-sm font-medium">Escuro</span>
-                <span className="block text-xs text-muted-foreground">Ativo</span>
-              </span>
-              <Check className="ml-auto h-4 w-4 text-lime-400" />
-            </button>
-            <button
-              type="button"
-              disabled
-              title="Em breve"
-              className="flex items-center gap-3 rounded-xl border border-border p-4 text-left opacity-50 cursor-not-allowed"
-            >
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white border border-zinc-200">
-                <Sun className="h-4 w-4 text-zinc-500" />
-              </span>
-              <span>
-                <span className="flex items-center gap-2 text-sm font-medium">
-                  Claro
-                  <Badge variant="secondary" className="h-4 px-1 text-[9px] uppercase">
-                    Em breve
-                  </Badge>
-                </span>
-                <span className="block text-xs text-muted-foreground">Indisponível</span>
-              </span>
-            </button>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-5 sm:p-6 space-y-4">
-          <div>
-            <h4 className="font-semibold text-sm">Cor de destaque</h4>
-            <p className="text-sm text-muted-foreground mt-1">
-              Você escolhe a cor dos botões e indicadores.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {ACCENTS.map((a) => (
-              <button
-                key={a.id}
-                type="button"
-                onClick={() => escolher(a.id)}
-                title={a.label}
-                className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition-colors ${
-                  accent === a.id
-                    ? 'border-ring bg-muted/60'
-                    : 'border-border hover:bg-muted/50'
-                }`}
-              >
-                <span className={`h-4 w-4 rounded-full ${a.className}`} />
-                {a.label}
-                {accent === a.id && <Check className="h-3.5 w-3.5 text-lime-400" />}
-              </button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Tela: Notificações (scaffold em localStorage — TODO(dev): push/backend)
-// ---------------------------------------------------------------------------
-
-interface Prefs {
-  lembretesAgenda: boolean
-  resumoSemanal: boolean
-  novidades: boolean
-}
-
-const NOTIF_KEY = 'crm:notifs'
-
-function carregarPrefs(): Prefs {
-  try {
-    const raw = localStorage.getItem(NOTIF_KEY)
-    if (raw) return { lembretesAgenda: true, resumoSemanal: true, novidades: false, ...JSON.parse(raw) }
-  } catch {
-    // ignora
-  }
-  return { lembretesAgenda: true, resumoSemanal: true, novidades: false }
-}
-
-function Toggle({
-  ativo,
-  onMudar,
-  label,
-}: {
-  ativo: boolean
-  onMudar: () => void
-  label: string
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={ativo}
-      aria-label={label}
-      onClick={onMudar}
-      className={`relative h-6 w-11 shrink-0 rounded-full border transition-colors duration-200 ${
-        ativo ? 'bg-lime-400 border-lime-400' : 'bg-muted border-border'
-      }`}
-    >
-      <span
-        className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 rounded-full transition-all ${
-          ativo ? 'left-[1.375rem] bg-zinc-950' : 'left-1 bg-muted-foreground'
-        }`}
-      />
-    </button>
-  )
-}
-
-function NotificacoesSection() {
-  const [prefs, setPrefs] = useState<Prefs>(carregarPrefs)
-  const { showToast } = useToast()
-
-  const mudar = (chave: keyof Prefs) => {
-    setPrefs((atual) => {
-      const proximo = { ...atual, [chave]: !atual[chave] }
-      localStorage.setItem(NOTIF_KEY, JSON.stringify(proximo))
-      // TODO(dev): sincronizar com o backend / push quando existir.
-      return proximo
-    })
-    showToast('Você salvou a preferência neste navegador.')
-  }
-
-  const itens: { chave: keyof Prefs; titulo: string; desc: string; breve?: boolean }[] = [
-    {
-      chave: 'lembretesAgenda',
-      titulo: 'Lembretes da agenda',
-      desc: 'Você recebe aviso antes dos compromissos marcados.',
-    },
-    {
-      chave: 'resumoSemanal',
-      titulo: 'Resumo semanal',
-      desc: 'Você recebe clientes e faturamento da semana.',
-      breve: true,
-    },
-    {
-      chave: 'novidades',
-      titulo: 'Novidades do Elo',
-      desc: 'Você fica sabendo quando sai função nova.',
-      breve: true,
-    },
-  ]
-
-  return (
-    <div className="space-y-4">
-      <div>
-        <h2 className="text-xl font-semibold tracking-tight">Notificações</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Você guarda suas escolhas neste navegador.
-        </p>
-      </div>
-      <Card>
-        <CardContent className="p-5 sm:p-6">
-          <h4 className="font-semibold text-sm flex items-center gap-2 mb-4">
-            <Bell className="w-4 h-4 text-muted-foreground" />
-            Avisos
-          </h4>
-          <div className="divide-y divide-border">
-            {itens.map((item) => (
-              <div key={item.chave} className="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
-                <div className="flex-1">
-                  <p className="text-sm font-medium flex items-center gap-2">
-                    {item.titulo}
-                    {item.breve && (
-                      <Badge variant="secondary" className="h-4 px-1 text-[9px] uppercase">
-                        Em breve
-                      </Badge>
-                    )}
-                  </p>
-                  <p className="text-sm text-muted-foreground">{item.desc}</p>
-                </div>
-                <Toggle ativo={prefs[item.chave]} onMudar={() => mudar(item.chave)} label={item.titulo} />
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
-
-// ---------------------------------------------------------------------------
 // Tela: Conta (origens, exportar, perigo)
 // ---------------------------------------------------------------------------
 
@@ -443,13 +199,6 @@ function ContaSection({ setActiveTab }: { setActiveTab?: (tab: Tab) => void }) {
     showToast('Você exportou em CSV.')
   }
 
-  const limparLocais = () => {
-    if (!window.confirm('Apagar os dados locais de Agenda e Serviços salvos neste navegador?')) return
-    localStorage.removeItem('crm:agenda')
-    localStorage.removeItem('crm:servicos')
-    showToast('Você apagou os dados locais.')
-  }
-
   return (
     <div className="space-y-4">
       <div>
@@ -473,25 +222,8 @@ function ContaSection({ setActiveTab }: { setActiveTab?: (tab: Tab) => void }) {
             </span>
           </button>
           <button
-            onClick={() => setActiveTab?.('agenda')}
-            className="w-full flex items-center gap-4 p-5 hover:bg-muted/50 transition-colors border-b border-border"
-          >
-            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
-              <Wallet className="w-5 h-5" />
-            </div>
-            <span className="flex-1 text-left">
-              <span className="block font-medium">
-                Meus dados
-                <Badge variant="secondary" className="ml-2 h-4 px-1 text-[9px] uppercase">
-                  {clientes.length} clientes
-                </Badge>
-              </span>
-              <span className="block text-sm text-muted-foreground">{user?.email || ''}</span>
-            </span>
-          </button>
-          <button
             onClick={exportar}
-            className="w-full flex items-center gap-4 p-5 hover:bg-muted/50 transition-colors"
+            className="w-full flex items-center gap-4 p-5 hover:bg-muted/50 transition-colors rounded-b-2xl"
           >
             <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
               <Download className="w-5 h-5" />
@@ -511,22 +243,8 @@ function ContaSection({ setActiveTab }: { setActiveTab?: (tab: Tab) => void }) {
         <Card className="border-red-500/20">
           <CardContent className="p-0">
             <button
-              onClick={limparLocais}
-              className="w-full flex items-center gap-4 p-5 hover:bg-muted/50 transition-colors border-b border-border rounded-t-2xl"
-            >
-              <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
-                <Trash2 className="w-5 h-5 text-red-400" />
-              </div>
-              <span className="flex-1 text-left">
-                <span className="block font-medium">Apagar dados locais</span>
-                <span className="block text-sm text-muted-foreground">
-                  Você apaga Agenda e Serviços deste navegador
-                </span>
-              </span>
-            </button>
-            <button
               onClick={logout}
-              className="w-full flex items-center gap-4 p-5 hover:bg-muted/50 transition-colors rounded-b-2xl"
+              className="w-full flex items-center gap-4 p-5 hover:bg-muted/50 transition-colors rounded-2xl"
             >
               <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center">
                 <LogOut className="w-5 h-5 text-destructive" />
@@ -548,8 +266,6 @@ export function ProfilePage({ setActiveTab, section = 'perfil', onTrocaSolicitad
   return (
     <div className="p-6 lg:p-8 max-w-3xl mx-auto w-full space-y-6">
       {section === 'perfil' && <PerfilSection onTrocaSolicitada={onTrocaSolicitada} />}
-      {section === 'aparencia' && <AparenciaSection />}
-      {section === 'notificacoes' && <NotificacoesSection />}
       {section === 'conta' && <ContaSection setActiveTab={setActiveTab} />}
     </div>
   )

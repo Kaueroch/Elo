@@ -16,6 +16,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<string | null>;
   register: (name: string, email: string, password: string) => Promise<string | null>;
   updateProfile: (payload: AtualizaPerfilPayload) => Promise<string | null>;
@@ -62,6 +63,42 @@ function readStoredUser(): User | null {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(readStoredUser);
+  const [isLoading, setIsLoading] = useState<boolean>(!!localStorage.getItem(TOKEN_STORAGE_KEY));
+
+  // Integração real com o back-end: valida a sessão chamando /api/auth/perfil.
+  // Se o token for inválido/revogado ou o back não responder, derruba a sessão.
+  useEffect(() => {
+    const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
+    let ativo = true;
+    authApi
+      .perfil()
+      .then((perfil) => {
+        if (!ativo) return;
+        const atualizado: User = {
+          email: perfil.email,
+          name: perfil.nome,
+          token,
+        };
+        setUser(atualizado);
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(atualizado));
+      })
+      .catch(() => {
+        if (!ativo) return;
+        clearStoredSession();
+        clearLocalData();
+        setUser(null);
+      })
+      .finally(() => {
+        if (ativo) setIsLoading(false);
+      });
+    return () => {
+      ativo = false;
+    };
+  }, []);
 
   // Persist current user session
   useEffect(() => {
@@ -175,8 +212,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const value = useMemo(
-    () => ({ user, login, register, updateProfile, syncPerfil, logout }),
-    [user],
+    () => ({ user, isLoading, login, register, updateProfile, syncPerfil, logout }),
+    [user, isLoading],
   );
 
   return (

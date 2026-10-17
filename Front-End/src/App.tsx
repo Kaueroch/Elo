@@ -10,13 +10,12 @@ import { AddClienteForm } from './clientes/components/AddClienteForm'
 import { HomePage } from './dashboard/HomePage'
 import { ClientesPage } from './clientes/ClientesPage'
 import { OrigensPage } from './origens/OrigensPage'
-import { AgendaPage } from './agenda/AgendaPage'
-import { ServicosPage } from './servicos/ServicosPage'
 import { ProfilePage } from './profile/ProfilePage'
 import { VerificarCodigoPage } from './profile/VerificarCodigoPage'
 import { RedefinirPage } from './profile/RedefinirPage'
 import { AuthPage } from './auth/AuthPage'
 import { LandingPage } from './landing/LandingPage'
+import { NotFoundPage } from './notfound/NotFoundPage'
 import { CrmProvider } from './crm/CrmContext'
 import { ClienteFormProvider } from './crm/ClienteFormContext'
 import { ToastProvider } from './shared/components/Toast'
@@ -32,16 +31,12 @@ const TAB_PATHS: Record<Tab, string> = {
   dashboard: '/dashboard',
   clientes: '/clientes',
   origens: '/origens',
-  agenda: '/agenda',
-  servicos: '/servicos',
   configuracoes: '/configuracoes/perfil',
 }
 
 /** Uma tela por seção das configurações (sem barra de abas). */
 const CONFIG_SECTION_PATHS: Record<ConfigSection, string> = {
   perfil: '/configuracoes/perfil',
-  aparencia: '/configuracoes/aparencia',
-  notificacoes: '/configuracoes/notificacoes',
   conta: '/configuracoes/conta',
 }
 
@@ -95,7 +90,7 @@ function getTabFromPath(): Tab {
 }
 
 function PublicGate() {
-  const { user } = useAuth()
+  const { user, isLoading } = useAuth()
   const [route, setRoute] = useState(getPublicRoute)
 
   useEffect(() => {
@@ -116,12 +111,22 @@ function PublicGate() {
     setRoute('landing')
   }
 
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <span className="h-8 w-8 animate-spin rounded-full border-2 border-amber-400/30 border-t-amber-400" />
+      </div>
+    )
+  }
   if (user) return <AuthenticatedApp />
   if (route === 'login') {
     return <AuthPage initialTab="login" onBack={goToLanding} />
   }
   if (route === 'registro') {
     return <AuthPage initialTab="register" onBack={goToLanding} />
+  }
+  if (currentPath() !== '/' && !PUBLIC_ROUTES[currentPath()]) {
+    return <NotFoundPage onHome={goToLanding} />
   }
   return <LandingPage />
 }
@@ -163,13 +168,6 @@ function AuthenticatedApp() {
       history.replaceState(null, '', configUrl(configSection, verificar))
     }
   }, [activeTab, flow, trocaToken, configSection])
-
-  // Rota desconhecida (inclusive a raiz) usa a home e corrige a URL.
-  useEffect(() => {
-    if (!isTabPath(currentPath())) {
-      history.replaceState(null, '', TAB_PATHS.dashboard)
-    }
-  }, [])
 
   const goConfigSection = (section: ConfigSection) => {
     setActiveTabState('configuracoes')
@@ -242,32 +240,40 @@ function AuthenticatedApp() {
         <SidebarInset>
           <SiteHeader activeTab={activeTab} setActiveTab={setActiveTab} title={headerTitle} />
           <div className="flex-1 flex flex-col overflow-auto relative">
-            <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-lime-400/[0.05] blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-amber-400/[0.05] blur-[120px] rounded-full pointer-events-none" />
             <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-white/[0.03] blur-[120px] rounded-full pointer-events-none" />
             <div className="flex-1 relative z-10">
-              {activeTab === 'dashboard' && <HomePage setActiveTab={setActiveTab} />}
-              {activeTab === 'clientes' && <ClientesPage />}
-              {activeTab === 'origens' && <OrigensPage />}
-              {activeTab === 'agenda' && <AgendaPage />}
-              {activeTab === 'servicos' && <ServicosPage />}
-              {activeTab === 'configuracoes' && flow?.screen === 'verificar' && (
-                <VerificarCodigoPage
-                  motivo={flow.motivo}
-                  email={user?.email ?? ''}
-                  onBack={() => goConfigSection('perfil')}
-                  onVerified={handleVerified}
+              {!isTabPath(currentPath()) ? (
+                <NotFoundPage
+                  onHome={() => {
+                    setActiveTab('dashboard')
+                  }}
                 />
-              )}
-              {activeTab === 'configuracoes' && flow?.screen === 'redefinir' && trocaToken && (
-                <RedefinirPage
-                  motivo={flow.motivo}
-                  trocaToken={trocaToken}
-                  onDone={handleTrocaDone}
-                  onPedirNovoCodigo={() => handleTrocaSolicitada(flow.motivo)}
-                />
-              )}
-              {activeTab === 'configuracoes' && !flow && (
-                <ProfilePage setActiveTab={setActiveTab} section={configSection} onTrocaSolicitada={handleTrocaSolicitada} />
+              ) : (
+                <>
+                  {activeTab === 'dashboard' && <HomePage setActiveTab={setActiveTab} />}
+                  {activeTab === 'clientes' && <ClientesPage />}
+                  {activeTab === 'origens' && <OrigensPage />}
+                  {activeTab === 'configuracoes' && flow?.screen === 'verificar' && (
+                    <VerificarCodigoPage
+                      motivo={flow.motivo}
+                      email={user?.email ?? ''}
+                      onBack={() => goConfigSection('perfil')}
+                      onVerified={handleVerified}
+                    />
+                  )}
+                  {activeTab === 'configuracoes' && flow?.screen === 'redefinir' && trocaToken && (
+                    <RedefinirPage
+                      motivo={flow.motivo}
+                      trocaToken={trocaToken}
+                      onDone={handleTrocaDone}
+                      onPedirNovoCodigo={() => handleTrocaSolicitada(flow.motivo)}
+                    />
+                  )}
+                  {activeTab === 'configuracoes' && !flow && (
+                    <ProfilePage setActiveTab={setActiveTab} section={configSection} onTrocaSolicitada={handleTrocaSolicitada} />
+                  )}
+                </>
               )}
             </div>
           </div>
