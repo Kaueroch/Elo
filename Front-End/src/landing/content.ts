@@ -12,11 +12,11 @@ export const nav = {
 }
 
 export const hero = {
-  badge: 'Seu livro-caixa de atendimentos',
-  titleTop: 'Quem indicou, quanto pagou,',
-  titleAccent: 'quando foi.',
+  badge: 'Caderno de ganhos para quem trabalha por conta própria',
+  titleTop: 'Quem você atendeu, quanto cobrou,',
+  titleAccent: 'de onde veio.',
   subtitle:
-    'Você atende, anota nome, valor, data e quem indicou. No fim do mês você vê de onde veio cada real.',
+    'Você atende, anota nome, valor, data e quem indicou. No fim do mês você vê de onde veio cada real. Sem planilha.',
   primaryCta: 'Criar conta grátis',
   secondaryCta: 'Ver como funciona',
   trustLine: 'Grátis no MVP, sem cartão · Só você acessa seus atendimentos',
