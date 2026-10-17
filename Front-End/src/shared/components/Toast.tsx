@@ -48,7 +48,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               transition={{ duration: 0.2 }}
               className="flex items-center gap-2.5 rounded-xl border border-border bg-card px-4 py-3 text-sm shadow-lg"
             >
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-lime-400/90" />
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-amber-400/90" />
               <span className="font-medium">{toast.message}</span>
             </motion.div>
           ))}
