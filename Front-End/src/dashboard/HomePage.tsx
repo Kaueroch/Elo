@@ -80,6 +80,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
   const { openClienteForm } = useClienteForm()
   const [selectedMonth, setSelectedMonth] = useState<MonthFilter>(getCurrentMonth())
   const [busca, setBusca] = useState('')
+  const [verTodos, setVerTodos] = useState(false)
 
   const goToPrevMonth = () => {
     setSelectedMonth(prev => {
@@ -100,19 +101,24 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
     : { month: selectedMonth.month - 1, year: selectedMonth.year }
 
   const filteredClientes = useMemo(() => {
+    if (verTodos) return clientes
     return clientes.filter(c => isSameMonth(c.data, selectedMonth.month, selectedMonth.year))
-  }, [clientes, selectedMonth])
+  }, [clientes, selectedMonth, verTodos])
 
   const prevClientes = useMemo(() => {
+    if (verTodos) return []
     return clientes.filter(c => isSameMonth(c.data, prevMonth.month, prevMonth.year))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [clientes, selectedMonth])
+  }, [clientes, selectedMonth, verTodos])
 
   const soma = (lista: Cliente[]) => lista.reduce((s, c) => s + Number(c.valorCobrado || 0), 0)
   const totalGanho = soma(filteredClientes)
   const ganhoAnterior = soma(prevClientes)
   const ticketMedio = filteredClientes.length > 0 ? totalGanho / filteredClientes.length : 0
   const ticketAnterior = prevClientes.length > 0 ? ganhoAnterior / prevClientes.length : 0
+  // Totais gerais (independente do mes selecionado).
+  const totalClientesAtendidos = clientes.length
+  const valorTotalGeral = clientes.reduce((s, c) => s + Number(c.valorCobrado || 0), 0)
 
   /** Melhor marca mensal (base da meta): maior faturamento de um mes. */
   const melhorMarca = useMemo(() => {
@@ -125,6 +131,13 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
     porMes.forEach(v => { if (v > max) max = v })
     return max
   }, [clientes])
+
+  /** Quantidade de meses com pelo menos um atendimento (usado em labels do modo "Todos"). */
+  const mesesAtivos = useMemo(() => {
+    const meses = new Set(clientes.map(c => c.data.slice(0, 7)))
+    return meses.size
+  }, [clientes])
+
 
   const pctMeta = melhorMarca > 0 ? Math.min(100, (totalGanho / melhorMarca) * 100) : 0
 
@@ -162,20 +175,45 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
     <div className="p-4 lg:p-6 gap-4 flex flex-col w-full">
       {/* Titulo + periodo + exportar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-xl font-bold tracking-tight">Painel do CRM</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-xl font-bold tracking-tight">Painel do CRM</h1>
+          <span className="rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+            {verTodos ? 'Visão geral' : 'Por mês'}
+          </span>
+        </div>
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center gap-1 rounded-lg border border-border bg-card py-1 pl-1 pr-1">
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={goToPrevMonth} aria-label="Mês anterior">
-              <ChevronLeft className="h-3.5 w-3.5" />
+          <div className="flex rounded-lg border border-border bg-muted p-1">
+            <Button
+              variant={verTodos ? 'default' : 'ghost'}
+              size="sm"
+              className="h-7 text-xs"
+              onClick={() => setVerTodos(true)}
+            >
+              Todos
             </Button>
-            <span className="flex items-center gap-1.5 px-1 text-xs text-muted-foreground capitalize">
-              <Calendar className="h-3.5 w-3.5" />
-              {formatMonthYear(selectedMonth.month, selectedMonth.year)}
-            </span>
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={goToNextMonth} aria-label="Próximo mês">
-              <ChevronRight className="h-3.5 w-3.5" />
+            <Button
+              variant={!verTodos ? 'default' : 'ghost'}
+              size="sm"
+              className="h-7 text-xs"
+              onClick={() => setVerTodos(false)}
+            >
+              Por mês
             </Button>
           </div>
+          {!verTodos && (
+            <div className="flex items-center gap-1 rounded-lg border border-border bg-card py-1 pl-1 pr-1">
+              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={goToPrevMonth} aria-label="Mês anterior">
+                <ChevronLeft className="h-3.5 w-3.5" />
+              </Button>
+              <span className="flex items-center gap-1.5 px-1 text-xs text-muted-foreground capitalize">
+                <Calendar className="h-3.5 w-3.5" />
+                {formatMonthYear(selectedMonth.month, selectedMonth.year)}
+              </span>
+              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={goToNextMonth} aria-label="Próximo mês">
+                <ChevronRight className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          )}
           <Button size="sm" onClick={() => exportarCSV(filteredClientes, nomeArquivo)}>
             <Download className="h-3.5 w-3.5" />
             Exportar
@@ -187,18 +225,27 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
       <Card className="border-amber-400/20 bg-amber-400/[0.03] p-6">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <span className="text-[13px] font-medium text-muted-foreground">Faturamento do mês</span>
+            <span className="text-[13px] font-medium text-muted-foreground">{verTodos ? 'Faturamento total' : 'Faturamento do mês'}</span>
             <div className="mt-1 text-4xl font-bold leading-none tracking-tight tabular-nums text-amber-200 sm:text-[2.75rem]">
               {formatBRL(totalGanho)}
             </div>
             <div className="mt-2">
-              <DeltaLine value={deltaPct(totalGanho, ganhoAnterior)} />
+              {verTodos ? (
+                <p className="text-xs text-muted-foreground">
+                  Soma de todos os valores cobrados · {mesesAtivos} {mesesAtivos === 1 ? 'mês ativo' : 'meses ativos'}.
+                </p>
+              ) : (
+                <DeltaLine value={deltaPct(totalGanho, ganhoAnterior)} />
+              )}
             </div>
             <div className="mt-4 flex items-center gap-3 border-t border-border/60 pt-4">
-              <GoalRing value={pctMeta} />
+              <GoalRing value={verTodos ? 100 : pctMeta} />
               <p className="text-xs leading-relaxed text-muted-foreground">
-                Você fez <span className="font-semibold text-foreground">{Math.round(pctMeta)}%</span> da
-                sua melhor marca ({formatBRL(melhorMarca)}).
+                {verTodos ? (
+                  <>Sua melhor marca mensal foi <span className="font-semibold text-foreground">{formatBRL(melhorMarca)}</span>.</>
+                ) : (
+                  <>Você fez <span className="font-semibold text-foreground">{Math.round(pctMeta)}%</span> da sua melhor marca ({formatBRL(melhorMarca)}).</>
+                )}
               </p>
             </div>
           </div>
@@ -208,18 +255,24 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
         </div>
       </Card>
 
+      {!verTodos && (
+      <>
       {/* Ticket + clientes */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Card className="p-5">
           <div className="flex items-center justify-between">
-            <span className="text-[13px] font-medium text-muted-foreground">Total de clientes</span>
+            <span className="text-[13px] font-medium text-muted-foreground">{verTodos ? 'Total de clientes' : 'Total de clientes do mês'}</span>
             <span className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground">
               <Users className="h-4 w-4" />
             </span>
           </div>
           <div className="mt-2 text-2xl font-semibold leading-none tracking-tight tabular-nums">{filteredClientes.length}</div>
           <div className="mt-1.5">
-            <DeltaLine value={deltaPct(filteredClientes.length, prevClientes.length)} />
+            {verTodos ? (
+              <p className="text-xs text-muted-foreground">Em {mesesAtivos} {mesesAtivos === 1 ? 'mês ativo' : 'meses ativos'}.</p>
+            ) : (
+              <DeltaLine value={deltaPct(filteredClientes.length, prevClientes.length)} />
+            )}
           </div>
         </Card>
 
@@ -232,8 +285,40 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           </div>
           <div className="mt-2 text-2xl font-semibold leading-none tracking-tight tabular-nums">{formatBRL(ticketMedio)}</div>
           <div className="mt-1.5">
-            <DeltaLine value={deltaPct(ticketMedio, ticketAnterior)} />
+            {verTodos ? (
+              <p className="text-xs text-muted-foreground">Média de todos os atendimentos.</p>
+            ) : (
+              <DeltaLine value={deltaPct(ticketMedio, ticketAnterior)} />
+            )}
           </div>
+        </Card>
+      </div>
+
+      </>
+      )}
+
+      {/* Resumo geral (todos os tempos) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Card className="p-5">
+          <div className="flex items-center justify-between">
+            <span className="text-[13px] font-medium text-muted-foreground">Total de clientes já atendidos</span>
+            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground">
+              <Users className="h-4 w-4" />
+            </span>
+          </div>
+          <div className="mt-2 text-2xl font-semibold leading-none tracking-tight tabular-nums">{totalClientesAtendidos}</div>
+          <p className="mt-1.5 text-xs text-muted-foreground">{mesesAtivos} {mesesAtivos === 1 ? 'mês ativo' : 'meses ativos'} · todos os atendimentos.</p>
+        </Card>
+
+        <Card className="p-5">
+          <div className="flex items-center justify-between">
+            <span className="text-[13px] font-medium text-muted-foreground">Valor total</span>
+            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground">
+              <Wallet className="h-4 w-4" />
+            </span>
+          </div>
+          <div className="mt-2 text-2xl font-semibold leading-none tracking-tight tabular-nums">{formatBRL(valorTotalGeral)}</div>
+          <p className="mt-1.5 text-xs text-muted-foreground">Soma de todos os valores cobrados.</p>
         </Card>
       </div>
 
