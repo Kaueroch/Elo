@@ -41,6 +41,7 @@ export function ClientesPage() {
   const [filterOrigem, setFilterOrigem] = useState<string>('all')
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [selectedMonth, setSelectedMonth] = useState<MonthFilter>(getCurrentMonth())
+  const [verTodos, setVerTodos] = useState(false)
   const [alvoExclusao, setAlvoExclusao] = useState<ClienteAlvo | null>(null)
   const [excluindo, setExcluindo] = useState(false)
 
@@ -63,7 +64,7 @@ export function ClientesPage() {
       const nomeOrigem = origemNomeDoCliente(c.conhecidoDaOnde)
       const matchSearch = c.nome.toLowerCase().includes(searchQuery.toLowerCase())
       const matchOrigem = filterOrigem === 'all' || nomeOrigem === filterOrigem
-      const matchMonth = isSameMonth(c.data, selectedMonth.month, selectedMonth.year)
+      const matchMonth = verTodos || isSameMonth(c.data, selectedMonth.month, selectedMonth.year)
       return matchSearch && matchOrigem && matchMonth
     })
 
@@ -90,7 +91,7 @@ export function ClientesPage() {
       id: nome,
       ...data
     })).sort((a, b) => b.total - a.total)
-  }, [clientes, searchQuery, filterOrigem, selectedMonth])
+  }, [clientes, searchQuery, filterOrigem, selectedMonth, verTodos])
 
   // Abre o primeiro grupo por padrão apenas na primeira carga, para não
   // exigir um clique extra. Depois disso o usuário controla a expansão,
@@ -108,6 +109,7 @@ export function ClientesPage() {
   const limparFiltros = () => {
     setSearchQuery('')
     setFilterOrigem('all')
+    setVerTodos(false)
     setSelectedMonth(getCurrentMonth())
   }
 
@@ -162,16 +164,38 @@ export function ClientesPage() {
               <SelectItem value={SEM_ORIGEM}>{SEM_ORIGEM}</SelectItem>
             </SelectContent>
           </Select>
-          <div className="flex w-full sm:w-auto items-center justify-between sm:justify-start gap-1 bg-muted rounded-lg p-1 border border-border">
-            <Button variant="ghost" size="icon-sm" onClick={goToPrevMonth} aria-label="Mês anterior">
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <span className="text-sm font-medium px-2 min-w-[120px] text-center capitalize">
-              {formatMonthYear(selectedMonth.month, selectedMonth.year)}
-            </span>
-            <Button variant="ghost" size="icon-sm" onClick={goToNextMonth} aria-label="Próximo mês">
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+          <div className="flex items-center gap-2">
+            <div className="flex rounded-lg border border-border bg-muted p-1">
+              <Button
+                variant={verTodos ? 'default' : 'ghost'}
+                size="sm"
+                className="h-8 text-xs"
+                onClick={() => setVerTodos(true)}
+              >
+                Todos
+              </Button>
+              <Button
+                variant={!verTodos ? 'default' : 'ghost'}
+                size="sm"
+                className="h-8 text-xs"
+                onClick={() => setVerTodos(false)}
+              >
+                Por mês
+              </Button>
+            </div>
+            {!verTodos && (
+              <div className="flex w-full sm:w-auto items-center justify-between sm:justify-start gap-1 bg-muted rounded-lg p-1 border border-border">
+                <Button variant="ghost" size="icon-sm" onClick={goToPrevMonth} aria-label="Mês anterior">
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="text-sm font-medium px-2 min-w-[120px] text-center capitalize">
+                  {formatMonthYear(selectedMonth.month, selectedMonth.year)}
+                </span>
+                <Button variant="ghost" size="icon-sm" onClick={goToNextMonth} aria-label="Próximo mês">
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -180,7 +204,7 @@ export function ClientesPage() {
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-12 text-center">
             <p className="text-muted-foreground">
-              {temFiltro ? 'Você não achou ninguém com este filtro.' : 'Você não atendeu ninguém neste mês.'}
+              {temFiltro ? 'Você não achou ninguém com este filtro.' : (verTodos ? 'Você ainda não tem clientes cadastrados.' : 'Você não atendeu ninguém neste mês.')}
             </p>
             {temFiltro ? (
               <Button variant="outline" size="sm" onClick={limparFiltros}>
@@ -244,9 +268,17 @@ export function ClientesPage() {
                           >
                             <div className="flex flex-col min-w-0 flex-1">
                               <span className="text-sm font-medium truncate">{cliente.nome}</span>
-                              <span className="text-[11px] text-muted-foreground">
-                                {formatDateBR(cliente.data)}
-                                {cliente.trabalhoFeito ? ` · ${cliente.trabalhoFeito}` : ''}
+                              <span className="text-[11px] text-muted-foreground flex items-center gap-1.5 flex-wrap">
+                                <span className="inline-flex items-center gap-1">
+                                  <span
+                                    className="h-1.5 w-1.5 shrink-0 rounded-full"
+                                    style={{ backgroundColor: origemColor(achaOrigem(origens, origemNomeDoCliente(cliente.conhecidoDaOnde))?.id) }}
+                                    aria-hidden
+                                  />
+                                  {origemNomeDoCliente(cliente.conhecidoDaOnde)}
+                                </span>
+                                <span>· {formatDateBR(cliente.data)}</span>
+                                {cliente.trabalhoFeito ? <span>· {cliente.trabalhoFeito}</span> : null}
                               </span>
                             </div>
                             <div className="flex items-center gap-1.5 shrink-0">
