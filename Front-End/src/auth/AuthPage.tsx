@@ -1,23 +1,29 @@
-import { useState, useMemo, useEffect, useRef, type FormEvent } from 'react'
-import { Wallet, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle, XCircle, Sparkles, ArrowRight, TrendingUp, BarChart3 } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { useState, useMemo, useEffect, type FormEvent } from 'react'
+import { Wallet, Eye, EyeOff, AlertCircle, CheckCircle, XCircle, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { useAuth } from './AuthContext'
 
+type Modo = 'login' | 'register'
+
 interface AuthPageProps {
-  initialTab?: 'login' | 'register'
+  initialTab?: Modo
 }
+
+const ROTA: Record<Modo, string> = { login: '/login', register: '/registro' }
+
+const inputClass =
+  'w-full px-5 py-3 rounded-xl bg-white/[0.07] text-white placeholder-zinc-500 text-sm border border-white/5 ' +
+  'transition-[border-color,box-shadow] focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-transparent'
+
+const emailValido = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
 export function AuthPage({ initialTab = 'login' }: AuthPageProps) {
   const { login, register } = useAuth()
   const reduceMotion = useReducedMotion()
 
-  const [tab, setTab] = useState<'login' | 'register'>(initialTab)
+  const [modo, setModo] = useState<Modo>(initialTab)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -27,70 +33,23 @@ export function AuthPage({ initialTab = 'login' }: AuthPageProps) {
   const [success, setSuccess] = useState('')
   const [popupMessage, setPopupMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [displayedText, setDisplayedText] = useState('')
 
+  // Voltar/avançar do navegador troca entre /login e /registro.
   useEffect(() => {
-    setTab(initialTab)
+    setModo(initialTab)
     setError('')
     setSuccess('')
     setPassword('')
     setConfirmPassword('')
   }, [initialTab])
 
-  const particles = useMemo(() =>
-    Array.from({ length: 6 }, () => ({
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 2 + 1,
-      duration: Math.random() * 16 + 14,
-      delay: Math.random() * 8,
-      xDrift: (Math.random() - 0.5) * 40,
-      yDrift: (Math.random() - 0.5) * 40,
-    })), []
-  )
-
-  const typewriterDone = useRef(false)
-  const fullSubtitle = "Você anota nome, valor, data e quem indicou."
-
-  useEffect(() => {
-    if (typewriterDone.current || reduceMotion) {
-      if (reduceMotion) setDisplayedText(fullSubtitle)
-      return
-    }
-    let i = 0
-    const interval = setInterval(() => {
-      i++
-      setDisplayedText(fullSubtitle.slice(0, i))
-      if (i >= fullSubtitle.length) {
-        clearInterval(interval)
-        typewriterDone.current = true
-      }
-    }, 22)
-    return () => clearInterval(interval)
-  }, [])
-
-  const switchToLogin = () => {
-    setTab('login')
+  const trocarModo = (novo: Modo) => {
+    setModo(novo)
     setError('')
     setSuccess('')
-  }
-
-  const handleLogin = async (e: FormEvent) => {
-    e.preventDefault()
-    setError('')
-    if (!email || !password) {
-      setError('Preencha todos os campos.')
-      return
-    }
-    setIsSubmitting(true)
-    try {
-      const errorMessage = await login(email.trim(), password)
-      if (errorMessage) setPopupMessage(errorMessage)
-    } catch {
-      setError('Erro de conexão.')
-    } finally {
-      setIsSubmitting(false)
-    }
+    setPassword('')
+    setConfirmPassword('')
+    if (window.location.pathname !== ROTA[novo]) history.pushState(null, '', ROTA[novo])
   }
 
   const passwordStrength = useMemo(() => {
@@ -102,47 +61,39 @@ export function AuthPage({ initialTab = 'login' }: AuthPageProps) {
     if (/[^A-Za-z0-9]/.test(password)) score++
     const labels = ['', 'Fraca', 'Média', 'Boa', 'Forte', 'Segura']
     const colors = ['', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-emerald-400', 'bg-emerald-500']
-    return { score, label: labels[score], color: colors[score], width: `${(score / 5) * 100}%` }
+    return { label: labels[score], color: colors[score], width: `${(score / 5) * 100}%` }
   }, [password])
 
   const passwordsMatch = password && confirmPassword ? password === confirmPassword : null
-  const nameFilled = name.trim().length > 0
-  const emailValid = email.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
-  const fields = [
-    { id: 'reg-name', icon: User, placeholder: 'Seu nome completo', value: name, setter: setName, type: 'text', valid: nameFilled, label: 'Nome' },
-    { id: 'reg-email', icon: Mail, placeholder: 'seu@email.com', value: email, setter: setEmail, type: 'email', valid: emailValid, label: 'E-mail' },
-    { id: 'reg-password', icon: Lock, placeholder: 'De 8 a 15 caracteres', value: password, setter: setPassword, type: showPassword ? 'text' : 'password', valid: password.length >= 8 && password.length <= 15, label: 'Senha' },
-    { id: 'reg-confirm', icon: Lock, placeholder: 'Repita a senha', value: confirmPassword, setter: setConfirmPassword, type: showPassword ? 'text' : 'password', valid: passwordsMatch === true, label: 'Confirmar Senha' },
-  ]
+  const handleLogin = async () => {
+    if (!email || !password) return setError('Preencha e-mail e senha.')
+    if (!emailValido(email)) return setError('Digite um e-mail válido.')
+    setIsSubmitting(true)
+    try {
+      const errorMessage = await login(email.trim(), password)
+      if (errorMessage) setPopupMessage(errorMessage)
+    } catch {
+      setError('Erro de conexão.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
-  const handleRegister = async (e: FormEvent) => {
-    e.preventDefault()
-    setError('')
-    if (!name || !email || !password || !confirmPassword) {
-      setError('Preencha todos os campos.')
-      return
-    }
-    if (password.length < 8 || password.length > 15) {
-      setError('A senha deve ter entre 8 e 15 caracteres.')
-      return
-    }
-    if (password !== confirmPassword) {
-      setError('As senhas não coincidem.')
-      return
-    }
+  const handleRegister = async () => {
+    if (!name.trim() || !email || !password || !confirmPassword) return setError('Preencha todos os campos.')
+    if (!emailValido(email)) return setError('Digite um e-mail válido.')
+    if (password.length < 8 || password.length > 15) return setError('A senha deve ter entre 8 e 15 caracteres.')
+    if (password !== confirmPassword) return setError('As senhas não conferem.')
     setIsSubmitting(true)
     try {
       const errorMessage = await register(name.trim(), email.trim(), password)
       if (errorMessage) {
         setPopupMessage(errorMessage)
       } else {
-        setSuccess('Conta criada com sucesso! Faça login.')
         setName('')
-        setEmail('')
-        setPassword('')
-        setConfirmPassword('')
-        setTimeout(() => switchToLogin(), 1500)
+        trocarModo('login')
+        setSuccess('Conta criada! Agora é só entrar.')
       }
     } catch {
       setError('Erro de conexão.')
@@ -151,403 +102,176 @@ export function AuthPage({ initialTab = 'login' }: AuthPageProps) {
     }
   }
 
-  const loginFields = [
-    { id: 'login-email', icon: Mail, placeholder: 'seu@email.com', value: email, setter: setEmail, type: 'email', valid: email.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) },
-    { id: 'login-password', icon: Lock, placeholder: 'Sua senha', value: password, setter: setPassword, type: showPassword ? 'text' : 'password', valid: password.length >= 8 },
-  ]
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setSuccess('')
+    void (modo === 'login' ? handleLogin() : handleRegister())
+  }
 
-  const heroFeatures = [
-    { icon: TrendingUp, label: 'Gestão de clientes' },
-    { icon: BarChart3, label: 'Ganhos por origem' },
-    { icon: Sparkles, label: 'Registro rápido' },
-  ]
+  const entrada = reduceMotion ? {} : { initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 } }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="min-h-screen flex bg-[#050806]"
-    >
-      {/* Hero */}
-      <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center p-12">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: 'linear-gradient(135deg, #18181b, #09090b, #000000)',
-          }}
-        />
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#050806] relative overflow-hidden px-4 py-10">
+      {/* Brilho verde de fundo */}
+      <div className="absolute top-[-15%] left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-emerald-500/[0.07] blur-[140px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-25%] right-[-10%] w-[400px] h-[400px] bg-emerald-400/[0.04] blur-[120px] rounded-full pointer-events-none" />
 
-        {!reduceMotion && particles.map((p, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-white pointer-events-none"
-            style={{ width: p.size, height: p.size, left: `${p.x}%`, top: `${p.y}%` }}
-            animate={{ x: [0, p.xDrift, 0], y: [0, p.yDrift, 0], opacity: [0.03, 0.06, 0.03] }}
-            transition={{ duration: p.duration, repeat: Infinity, ease: 'easeInOut', delay: p.delay }}
-          />
-        ))}
-
-        <div className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-emerald-400/[0.05] blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[450px] h-[450px] bg-white/5 blur-[130px] rounded-full" />
-
-        <div className="relative z-10 text-center max-w-md">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-8"
-          >
-            <Wallet className="w-8 h-8 text-white" />
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="text-5xl font-bold text-white tracking-tight mb-4"
-          >
-            Elo
-          </motion.h1>
-
-          <div className="h-14 flex items-center justify-center">
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-              className="text-xl text-zinc-400 leading-relaxed"
-            >
-              {displayedText}
-              {!reduceMotion && displayedText.length < fullSubtitle.length && (
-                <motion.span
-                  animate={{ opacity: [1, 0] }}
-                  transition={{ duration: 0.8, repeat: Infinity }}
-                  className="inline-block w-[2px] h-5 bg-zinc-400 ml-0.5 align-middle"
-                />
-              )}
-            </motion.p>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="mt-10 grid grid-cols-3 gap-6 text-center"
-          >
-            {heroFeatures.map((f, i) => (
-              <motion.div
-                key={f.label}
-                whileHover={{ y: -3, scale: 1.03 }}
-                transition={{ duration: 0.2 }}
-              >
-                <f.icon className="w-6 h-6 text-zinc-300 mx-auto mb-2" />
-                <div className="text-zinc-500 text-sm">{f.label}</div>
-              </motion.div>
-            ))}
-          </motion.div>
+      {/* Cartão de vidro */}
+      <motion.div
+        {...entrada}
+        transition={{ duration: 0.5 }}
+        className="relative z-10 w-full max-w-sm rounded-3xl bg-gradient-to-r from-white/[0.06] to-[#050806] border border-white/[0.06] backdrop-blur-sm shadow-2xl p-8 flex flex-col items-center"
+      >
+        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-400/15 ring-1 ring-emerald-400/25 mb-6 shadow-lg shadow-emerald-500/10">
+          <Wallet className="w-6 h-6 text-emerald-400" />
         </div>
-      </div>
+        <h1 className="text-2xl font-semibold text-white text-center">Elo</h1>
+        <p className="text-sm text-zinc-400 mt-1 mb-6 text-center">
+          {modo === 'login' ? 'Entre na sua conta' : 'Crie sua conta grátis'}
+        </p>
 
-      {/* Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 relative overflow-hidden">
-        <div className="absolute top-[-20%] right-[-15%] w-[500px] h-[500px] bg-emerald-400/[0.05] blur-[150px] rounded-full" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-white/5 blur-[120px] rounded-full" />
+        <form onSubmit={handleSubmit} noValidate className="flex flex-col w-full gap-4">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={modo}
+              initial={reduceMotion ? false : { opacity: 0, x: modo === 'login' ? -10 : 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={reduceMotion ? undefined : { opacity: 0, x: modo === 'login' ? 10 : -10 }}
+              transition={{ duration: 0.18 }}
+              className="w-full flex flex-col gap-3"
+            >
+              {modo === 'register' && (
+                <>
+                  <label htmlFor="auth-name" className="sr-only">Nome</label>
+                  <input
+                    id="auth-name"
+                    placeholder="Seu nome"
+                    autoComplete="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className={inputClass}
+                  />
+                </>
+              )}
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="w-full max-w-sm relative z-10"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.15 }}
-            className="flex items-center justify-center gap-3 mb-8 lg:hidden"
-          >
-            <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center">
-              <Wallet className="w-6 h-6" />
-            </div>
-            <span className="font-bold text-2xl tracking-tight text-white">Elo</span>
-          </motion.div>
+              <label htmlFor="auth-email" className="sr-only">E-mail</label>
+              <input
+                id="auth-email"
+                type="email"
+                placeholder="E-mail"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={inputClass}
+              />
 
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
-            <Card className="border-border/60 shadow-[0_0_30px_rgba(255,255,255,0.02)]">
-              <CardContent className="pt-6 pb-6">
-                <Tabs value={tab} onValueChange={setTab}>
-                  <motion.div
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="relative"
-                  >
-                    <TabsList className="w-full mb-1 relative">
-                      <TabsTrigger
-                        value="login"
-                        className="flex-1 data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
-                      >
-                        Entrar
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="register"
-                        className="flex-1 data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
-                      >
-                        Cadastrar
-                      </TabsTrigger>
-                    </TabsList>
-                    <motion.div
-                      className="h-[2px] bg-white/20 rounded-full"
-                      style={{ width: '50%' }}
-                      animate={{ x: tab === 'login' ? '0%' : '100%' }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                    />
-                  </motion.div>
-
-                  <div className="mt-5">
-                    <AnimatePresence mode="wait">
-                      {(error || success) && (
-                        <motion.div
-                          key="alert"
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className={`flex items-center gap-2.5 px-4 py-3 rounded-lg text-sm font-medium mb-4 overflow-hidden ${
-                            error
-                              ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                              : 'bg-emerald-400/10 text-emerald-400/90 border border-emerald-400/20'
-                          }`}
-                        >
-                          {error ? <AlertCircle className="w-4 h-4 shrink-0" /> : <CheckCircle className="w-4 h-4 shrink-0" />}
-                          <span>{error || success}</span>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-
-                    <AnimatePresence mode="wait">
-                      {tab === 'login' && (
-                        <motion.div
-                          key="login"
-                          initial={{ opacity: 0, x: -12 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: 12 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <form onSubmit={handleLogin} className="flex flex-col gap-4">
-                            {loginFields.map((field, i) => (
-                              <motion.div
-                                key={field.id}
-                                initial={{ opacity: 0, y: -8 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.06 }}
-                                className="space-y-2"
-                              >
-                                <Label htmlFor={field.id}>{field.id === 'login-email' ? 'E-mail' : 'Senha'}</Label>
-                                <div className="relative">
-                                  <field.icon className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
-                                  <Input
-                                    id={field.id}
-                                    type={field.type}
-                                    placeholder={field.placeholder}
-                                    value={field.value}
-                                    onChange={e => field.setter(e.target.value)}
-                                    className={`pl-9 pr-9 transition-[border-color,box-shadow] duration-300 ${
-                                      field.value && (field.valid ? 'border-emerald-400/40' : 'border-red-500/40')
-                                    }`}
-                                  />
-                                  <AnimatePresence>
-                                    {field.value && (
-                                      <motion.div
-                                        initial={{ scale: 0 }}
-                                        animate={{ scale: 1 }}
-                                        exit={{ scale: 0 }}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2"
-                                      >
-                                        {field.valid ? (
-                                          <CheckCircle className="w-4 h-4 text-emerald-400" />
-                                        ) : (
-                                          <XCircle className="w-4 h-4 text-red-500" />
-                                        )}
-                                      </motion.div>
-                                    )}
-                                  </AnimatePresence>
-                                  {field.id === 'login-password' && (
-                                    <button
-                                      type="button"
-                                      onClick={() => setShowPassword(!showPassword)}
-                                      className="absolute right-9 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
-                                    >
-                                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                    </button>
-                                  )}
-                                </div>
-                              </motion.div>
-                            ))}
-                            <motion.div
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ delay: 0.15 }}
-                            >
-                              <div className="rounded-md">
-                                <Button type="submit" disabled={isSubmitting} className="w-full h-9 gap-2 transition-[filter] duration-300 hover:brightness-110">
-                                  {isSubmitting ? (
-                                    <span className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                                  ) : (
-                                    <>Entrar <ArrowRight className="w-4 h-4" /></>
-                                  )}
-                                </Button>
-                              </div>
-                            </motion.div>
-                          </form>
-                        </motion.div>
-                      )}
-                      {tab === 'register' && (
-                        <motion.div
-                          key="register"
-                          initial={{ opacity: 0, x: 12 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -12 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <form onSubmit={handleRegister} className="flex flex-col gap-3">
-                            {fields.map((field, i) => (
-                              <motion.div
-                                key={field.id}
-                                initial={{ opacity: 0, y: -8 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.2, delay: i * 0.04 }}
-                                className="space-y-1.5"
-                              >
-                                <Label htmlFor={field.id}>{field.label}</Label>
-                                <div className="relative">
-                                  <field.icon className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
-                                  <Input
-                                    id={field.id}
-                                    type={field.type}
-                                    placeholder={field.placeholder}
-                                    value={field.value}
-                                    onChange={e => field.setter(e.target.value)}
-                                    className={`pl-9 pr-9 transition-[border-color,box-shadow] duration-300 ${
-                                      field.value && (field.valid ? 'border-emerald-400/40' : 'border-red-500/40')
-                                    }`}
-                                  />
-                                  <AnimatePresence>
-                                    {field.value && (
-                                      <motion.div
-                                        initial={{ scale: 0 }}
-                                        animate={{ scale: 1 }}
-                                        exit={{ scale: 0 }}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2"
-                                      >
-                                        {field.valid ? (
-                                          <CheckCircle className="w-4 h-4 text-emerald-400" />
-                                        ) : (
-                                          <XCircle className="w-4 h-4 text-red-500" />
-                                        )}
-                                      </motion.div>
-                                    )}
-                                  </AnimatePresence>
-                                  {field.id === 'reg-password' && field.value && (
-                                    <button
-                                      type="button"
-                                      onClick={() => setShowPassword(!showPassword)}
-                                      className="absolute right-9 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
-                                    >
-                                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                    </button>
-                                  )}
-                                </div>
-                                {field.id === 'reg-password' && password && (
-                                  <motion.div
-                                    initial={{ height: 0, opacity: 0 }}
-                                    animate={{ height: 'auto', opacity: 1 }}
-                                    className="overflow-hidden"
-                                  >
-                                    <div className="flex items-center gap-2 mt-1">
-                                      <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                                        <motion.div
-                                          initial={{ width: 0 }}
-                                          animate={{ width: passwordStrength.width }}
-                                          className={`h-full rounded-full ${passwordStrength.color}`}
-                                          transition={{ duration: 0.3 }}
-                                        />
-                                      </div>
-                                      <span className="text-[10px] font-medium text-muted-foreground min-w-[40px] text-right">
-                                        {passwordStrength.label}
-                                      </span>
-                                    </div>
-                                  </motion.div>
-                                )}
-                                {field.id === 'reg-confirm' && confirmPassword && (
-                                  <motion.div
-                                    initial={{ height: 0, opacity: 0 }}
-                                    animate={{ height: 'auto', opacity: 1 }}
-                                    className="overflow-hidden"
-                                  >
-                                    <p className={`text-[11px] flex items-center gap-1 mt-0.5 ${passwordsMatch ? 'text-emerald-400' : 'text-red-500'}`}>
-                                      {passwordsMatch ? (
-                                        <><CheckCircle className="w-3 h-3" /> Senhas conferem</>
-                                      ) : (
-                                        <><XCircle className="w-3 h-3" /> Senhas não conferem</>
-                                      )}
-                                    </p>
-                                  </motion.div>
-                                )}
-                              </motion.div>
-                            ))}
-
-                            <motion.div
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ delay: 0.2 }}
-                            >
-                              <div className="rounded-md">
-                                <Button type="submit" disabled={isSubmitting} className="w-full h-9 gap-2 transition-[filter] duration-300 hover:brightness-110">
-                                  {isSubmitting ? (
-                                    <span className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                                  ) : (
-                                    <>
-                                      <Sparkles className="w-4 h-4" />
-                                      Criar Conta
-                                      <ArrowRight className="w-4 h-4" />
-                                    </>
-                                  )}
-                                </Button>
-                              </div>
-                            </motion.div>
-                          </form>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </Tabs>
-
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6 }}
-                  className="text-center text-xs text-muted-foreground mt-6"
+              <div className="relative">
+                <label htmlFor="auth-password" className="sr-only">Senha</label>
+                <input
+                  id="auth-password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder={modo === 'login' ? 'Senha' : 'Senha (8 a 15 caracteres)'}
+                  autoComplete={modo === 'login' ? 'current-password' : 'new-password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`${inputClass} pr-12`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? 'Esconder senha' : 'Mostrar senha'}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-200 transition-colors cursor-pointer"
                 >
-                  Ao continuar, você concorda com nossos Termos de Uso e Política de Privacidade.
-                </motion.p>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </motion.div>
-      </div>
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+
+              {modo === 'register' && password && (
+                <div className="flex items-center gap-2 px-1">
+                  <div className="flex-1 h-1 rounded-full bg-white/10 overflow-hidden">
+                    <div className={`h-full rounded-full transition-all duration-300 ${passwordStrength.color}`} style={{ width: passwordStrength.width }} />
+                  </div>
+                  <span className="text-[10px] font-medium text-zinc-400 min-w-[40px] text-right">{passwordStrength.label}</span>
+                </div>
+              )}
+
+              {modo === 'register' && (
+                <>
+                  <label htmlFor="auth-confirm" className="sr-only">Confirmar senha</label>
+                  <input
+                    id="auth-confirm"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Repita a senha"
+                    autoComplete="new-password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className={inputClass}
+                  />
+                  {confirmPassword && (
+                    <p className={`text-[11px] flex items-center gap-1 px-1 ${passwordsMatch ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {passwordsMatch ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                      {passwordsMatch ? 'Senhas conferem' : 'Senhas não conferem'}
+                    </p>
+                  )}
+                </>
+              )}
+            </motion.div>
+          </AnimatePresence>
+
+          {(error || success) && (
+            <div role="alert" className={`flex items-center gap-2 text-sm px-1 ${error ? 'text-red-400' : 'text-emerald-400'}`}>
+              {error ? <AlertCircle className="w-4 h-4 shrink-0" /> : <CheckCircle className="w-4 h-4 shrink-0" />}
+              {error || success}
+            </div>
+          )}
+
+          <hr className="border-white/10" />
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full flex items-center justify-center gap-2 bg-emerald-500 text-zinc-950 font-medium px-5 py-3 rounded-full shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 disabled:opacity-60 transition-colors text-sm cursor-pointer"
+          >
+            {isSubmitting ? (
+              <span className="w-4 h-4 border-2 border-zinc-950/20 border-t-zinc-950 rounded-full animate-spin" />
+            ) : (
+              <>
+                {modo === 'login' ? 'Entrar' : 'Criar conta'}
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
+          </button>
+
+          <p className="w-full text-center text-xs text-zinc-400">
+            {modo === 'login' ? 'Ainda não tem conta? ' : 'Já tem conta? '}
+            <button
+              type="button"
+              onClick={() => trocarModo(modo === 'login' ? 'register' : 'login')}
+              className="underline underline-offset-2 text-white/80 hover:text-white cursor-pointer"
+            >
+              {modo === 'login' ? 'Crie a sua, é grátis!' : 'Entrar'}
+            </button>
+          </p>
+        </form>
+      </motion.div>
+
+      <motion.p
+        {...entrada}
+        transition={{ duration: 0.5, delay: 0.15 }}
+        className="relative z-10 mt-10 max-w-sm text-center text-sm text-zinc-500"
+      >
+        Anote cada atendimento e veja <span className="text-zinc-200 font-medium">quanto entrou no mês</span>.
+      </motion.p>
 
       <Dialog open={!!popupMessage} onOpenChange={(open) => !open && setPopupMessage('')}>
         <DialogContent showCloseButton={false}>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-red-500">
               <AlertCircle className="w-5 h-5" />
-              Você não conseguiu entrar
+              {modo === 'login' ? 'Você não conseguiu entrar' : 'Não deu para criar a conta'}
             </DialogTitle>
-            <DialogDescription className="pt-1">
-              {popupMessage}
-            </DialogDescription>
+            <DialogDescription className="pt-1">{popupMessage}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" className="w-full sm:w-auto" onClick={() => setPopupMessage('')}>
@@ -556,6 +280,6 @@ export function AuthPage({ initialTab = 'login' }: AuthPageProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </motion.div>
+    </div>
   )
 }
