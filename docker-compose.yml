@@ -1,0 +1,59 @@
+name: elo
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: elo_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-crm_kauezao}
+      POSTGRES_USER: ${DB_USER:-elo}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?defina DB_PASSWORD no .env}
+    ports:
+      # So localhost. 5433 para nao brigar com um Postgres local na 5432.
+      - "127.0.0.1:${DB_PORT_EXTERNAL:-5433}:5432"
+    volumes:
+      - elo_pgdata:/var/lib/postgresql/data
+      # Roda o schema na primeira vez que o volume e criado.
+      - ./Back-end/clientes/src/main/resources/db:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./Back-end/clientes
+    container_name: elo_api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-crm_kauezao}
+      DB_USER: ${DB_USER:-elo}
+      DB_PASSWORD: ${DB_PASSWORD}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      TOKEN_SECRET: ${TOKEN_SECRET:?defina TOKEN_SECRET no .env}
+      TOKEN_EXPIRATION_SECONDS: ${TOKEN_EXPIRATION_SECONDS:-86400}
+      REGISTRATION_ENABLED: ${REGISTRATION_ENABLED:-true}
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-8080}:8080"
+
+  frontend:
+    build:
+      context: ./Front-End
+      args:
+        # O nginx do container repassa /api para backend:8080.
+        VITE_API_URL: /api
+    container_name: elo_web
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+
+volumes:
+  elo_pgdata:

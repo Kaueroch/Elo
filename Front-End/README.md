@@ -65,10 +65,11 @@ npm run lint        # tsc --noEmit
 
 ### Docker
 
+Da raiz do monorepo, com banco e API juntos:
+
 ```bash
-docker build -t elo-front .
-docker run -p 3000:80 elo-front
-# O nginx do container repassa /api para backend:8080
+docker compose up -d --build
+# Front em http://localhost:3000; o nginx repassa /api para backend:8080
 ```
 
 ## Scripts

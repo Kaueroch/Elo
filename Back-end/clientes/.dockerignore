@@ -7,3 +7,5 @@ target/
 .vscode/
 *.iml
 HELP.md
+# Config local da maquina (senha do banco). Nunca entra na imagem.
+src/main/resources/application-local.yml

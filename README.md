@@ -62,9 +62,30 @@ serviço e não tem tempo para planilha.
 
 ## Como rodar
 
+### Com Docker (mais rápido)
+
+**Pré-requisito:** Docker com Compose.
+
+```bash
+cp .env.example .env
+# troque DB_PASSWORD e TOKEN_SECRET no .env
+docker compose up -d --build
+```
+
+| Serviço | Endereço |
+|---------|----------|
+| Front-end | http://localhost:3000 |
+| API | http://localhost:8080 |
+| Banco | localhost:5433 |
+
+Para parar: `docker compose down` (os dados ficam no volume `elo_pgdata`;
+`docker compose down -v` apaga tudo).
+
+### Sem Docker
+
 **Pré-requisitos:** Java 17, Node.js 20+ e PostgreSQL rodando na porta 5432.
 
-### 1. Banco
+#### 1. Banco
 
 ```sql
 CREATE DATABASE crm_kauezao;
@@ -73,7 +94,7 @@ CREATE DATABASE crm_kauezao;
 As tabelas são criadas pelo Hibernate na primeira subida. O schema de
 referência está em `Back-end/clientes/src/main/resources/db/schema_clientes.sql`.
 
-### 2. Back-end
+#### 2. Back-end
 
 Crie o arquivo de config local com o usuário e a senha do seu Postgres
 (ele fica fora do git):
@@ -93,7 +114,7 @@ cd Back-end/clientes
 
 A API sobe em `http://localhost:8080`. Teste com `GET /api/health`.
 
-### 3. Front-end
+#### 3. Front-end
 
 ```bash
 cd Front-End
@@ -141,7 +162,8 @@ O `application.yml` lê variáveis de ambiente com padrões só para dev.
 Em produção defina pelo menos `DB_URL`, `DB_USER`, `DB_PASSWORD`,
 `TOKEN_SECRET` (forte), `CORS_ORIGINS` com seu domínio e, depois de criar
 sua conta, `REGISTRATION_ENABLED=false`. A lista completa está em
-[`.env.example`](.env.example). Cada módulo tem um `Dockerfile` próprio.
+[`.env.example`](.env.example). O `docker-compose.yml` sobe banco, API e front;
+cada módulo também tem um `Dockerfile` próprio.
 
 ## Próximos passos
 
