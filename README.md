@@ -26,14 +26,6 @@ serviço e não tem tempo para planilha.
 - Exporta os atendimentos em CSV.
 - Login com e-mail e senha (JWT). Cada usuário só vê os próprios dados.
 
-<!--
-## Telas
-
-| Painel | Clientes | Origens |
-|--------|----------|---------|
-| ![Painel](docs/screenshots/painel.png) | ![Clientes](docs/screenshots/clientes.png) | ![Origens](docs/screenshots/origens.png) |
--->
-
 ## Stack
 
 | Camada | Tecnologias |
@@ -56,8 +48,7 @@ serviço e não tem tempo para planilha.
 │       ├── domain/           # Entidades
 │       ├── dtos/             # Request / Response
 │       └── infra/            # Segurança, CORS, tratamento de erros
-├── Front-End/                # SPA React (ver Front-End/README.md)
-└── docs/                     # Roadmap e prints
+└── Front-End/                # SPA React (ver Front-End/README.md)
 ```
 
 ## Como rodar
@@ -167,8 +158,8 @@ cada módulo também tem um `Dockerfile` próprio.
 
 ## Próximos passos
 
-Veja o [roadmap](docs/futuro.md): contas a pagar com lembrete de vencimento,
-notificações e verificação de e-mail por código.
+Contas a pagar com lembrete de vencimento, notificações e verificação de
+e-mail por código.
 
 ## Licença
 
