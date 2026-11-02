@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef, type FormEvent } from 'react'
-import { Wallet, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle, XCircle, Sparkles, ArrowRight, ArrowLeft, TrendingUp, BarChart3 } from 'lucide-react'
+import { Wallet, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle, XCircle, Sparkles, ArrowRight, TrendingUp, BarChart3 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -11,10 +11,9 @@ import { useAuth } from './AuthContext'
 
 interface AuthPageProps {
   initialTab?: 'login' | 'register'
-  onBack?: () => void
 }
 
-export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
+export function AuthPage({ initialTab = 'login' }: AuthPageProps) {
   const { login, register } = useAuth()
   const reduceMotion = useReducedMotion()
 
@@ -102,7 +101,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
     if (/[0-9]/.test(password)) score++
     if (/[^A-Za-z0-9]/.test(password)) score++
     const labels = ['', 'Fraca', 'Média', 'Boa', 'Forte', 'Segura']
-    const colors = ['', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-amber-400', 'bg-amber-400']
+    const colors = ['', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-emerald-400', 'bg-emerald-500']
     return { score, label: labels[score], color: colors[score], width: `${(score / 5) * 100}%` }
   }, [password])
 
@@ -168,7 +167,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen flex bg-[#07070d]"
+      className="min-h-screen flex bg-[#050806]"
     >
       {/* Hero */}
       <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center p-12">
@@ -189,7 +188,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
           />
         ))}
 
-        <div className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-amber-400/[0.05] blur-[120px] rounded-full" />
+        <div className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-emerald-400/[0.05] blur-[120px] rounded-full" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[450px] h-[450px] bg-white/5 blur-[130px] rounded-full" />
 
         <div className="relative z-10 text-center max-w-md">
@@ -197,9 +196,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            onClick={onBack}
-            title={onBack ? 'Voltar para a página inicial' : undefined}
-            className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-8 cursor-pointer"
+            className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-8"
           >
             <Wallet className="w-8 h-8 text-white" />
           </motion.div>
@@ -207,9 +204,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            onClick={onBack}
-            title={onBack ? 'Voltar para a página inicial' : undefined}
-            className="text-5xl font-bold text-white tracking-tight mb-4 cursor-pointer hover:opacity-80 transition-opacity"
+            className="text-5xl font-bold text-white tracking-tight mb-4"
           >
             Elo
           </motion.h1>
@@ -254,7 +249,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
 
       {/* Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 relative overflow-hidden">
-        <div className="absolute top-[-20%] right-[-15%] w-[500px] h-[500px] bg-amber-400/[0.05] blur-[150px] rounded-full" />
+        <div className="absolute top-[-20%] right-[-15%] w-[500px] h-[500px] bg-emerald-400/[0.05] blur-[150px] rounded-full" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-white/5 blur-[120px] rounded-full" />
 
         <motion.div
@@ -263,23 +258,11 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="w-full max-w-sm relative z-10"
         >
-          {onBack && (
-            <button
-              type="button"
-              onClick={onBack}
-              className="mb-6 flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 cursor-pointer"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Página inicial
-            </button>
-          )}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.15 }}
-            onClick={onBack}
-            title={onBack ? 'Voltar para a página inicial' : undefined}
-            className="flex items-center justify-center gap-3 mb-8 lg:hidden cursor-pointer"
+            className="flex items-center justify-center gap-3 mb-8 lg:hidden"
           >
             <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center">
               <Wallet className="w-6 h-6" />
@@ -334,7 +317,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                           className={`flex items-center gap-2.5 px-4 py-3 rounded-lg text-sm font-medium mb-4 overflow-hidden ${
                             error
                               ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                              : 'bg-amber-400/10 text-amber-400/90 border border-amber-400/20'
+                              : 'bg-emerald-400/10 text-emerald-400/90 border border-emerald-400/20'
                           }`}
                         >
                           {error ? <AlertCircle className="w-4 h-4 shrink-0" /> : <CheckCircle className="w-4 h-4 shrink-0" />}
@@ -371,7 +354,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                     value={field.value}
                                     onChange={e => field.setter(e.target.value)}
                                     className={`pl-9 pr-9 transition-[border-color,box-shadow] duration-300 ${
-                                      field.value && (field.valid ? 'border-amber-400/40' : 'border-red-500/40')
+                                      field.value && (field.valid ? 'border-emerald-400/40' : 'border-red-500/40')
                                     }`}
                                   />
                                   <AnimatePresence>
@@ -383,7 +366,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                         className="absolute right-3 top-1/2 -translate-y-1/2"
                                       >
                                         {field.valid ? (
-                                          <CheckCircle className="w-4 h-4 text-amber-400" />
+                                          <CheckCircle className="w-4 h-4 text-emerald-400" />
                                         ) : (
                                           <XCircle className="w-4 h-4 text-red-500" />
                                         )}
@@ -447,7 +430,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                     value={field.value}
                                     onChange={e => field.setter(e.target.value)}
                                     className={`pl-9 pr-9 transition-[border-color,box-shadow] duration-300 ${
-                                      field.value && (field.valid ? 'border-amber-400/40' : 'border-red-500/40')
+                                      field.value && (field.valid ? 'border-emerald-400/40' : 'border-red-500/40')
                                     }`}
                                   />
                                   <AnimatePresence>
@@ -459,7 +442,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                         className="absolute right-3 top-1/2 -translate-y-1/2"
                                       >
                                         {field.valid ? (
-                                          <CheckCircle className="w-4 h-4 text-amber-400" />
+                                          <CheckCircle className="w-4 h-4 text-emerald-400" />
                                         ) : (
                                           <XCircle className="w-4 h-4 text-red-500" />
                                         )}
@@ -503,7 +486,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                     animate={{ height: 'auto', opacity: 1 }}
                                     className="overflow-hidden"
                                   >
-                                    <p className={`text-[11px] flex items-center gap-1 mt-0.5 ${passwordsMatch ? 'text-amber-400' : 'text-red-500'}`}>
+                                    <p className={`text-[11px] flex items-center gap-1 mt-0.5 ${passwordsMatch ? 'text-emerald-400' : 'text-red-500'}`}>
                                       {passwordsMatch ? (
                                         <><CheckCircle className="w-3 h-3" /> Senhas conferem</>
                                       ) : (

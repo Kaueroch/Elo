@@ -5,7 +5,7 @@ import { Origem } from '../types';
  * A cor e escolhida de forma estavel pelo id da origem, para a mesma
  * origem sempre aparecer com a mesma cor no dashboard e nos cards.
  */
-export const ORIGEM_COLORS = ['#a3e635', '#38bdf8', '#c084fc', '#fb923c', '#f472b6', '#a1a1aa'];
+export const ORIGEM_COLORS = ['#34d399', '#38bdf8', '#c084fc', '#fb923c', '#f472b6', '#a1a1aa'];
 
 export const ORIGEM_FALLBACK_COLOR = '#666666';
 

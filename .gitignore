@@ -24,3 +24,14 @@ yarn-error.log*
 # Sistema
 .DS_Store
 Thumbs.db
+# Config local do back-end (senha do banco etc.)
+Back-end/clientes/src/main/resources/application-local.yml
+
+# Arquivos de IA / fluxo SDD (ficam so locais)
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+specs/
+Front-End/RULES_IA.md
+Front-End/Skills.md
+Front-End/metadata.json

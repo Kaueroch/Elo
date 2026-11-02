@@ -1,0 +1,5 @@
+# Copie para application-local.yml (fora do git) e ajuste para o seu Postgres.
+spring:
+  datasource:
+    username: seu-usuario
+    password: sua-senha

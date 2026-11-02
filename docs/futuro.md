@@ -1,11 +1,9 @@
 # Futuro — roadmap de features do Elo
 
-Fonte de verdade do escopo: [`specs/`](../specs/README.md). Aqui vai o resumo
-por feature: telas, endpoints, fases, dependências e estado.
+Resumo por feature: telas, endpoints, fases, dependências e estado.
 
 ## 1. Contas a pagar — `futura`
 
-Escopo completo em [`specs/2026-10-cobrancas/spec.md`](../specs/2026-10-cobrancas/spec.md).
 Sidebar mostra `Contas a pagar` apagado no grupo `Em breve`.
 
 - **Telas (front):** `/cobrancas` com lista ordenada por vencimento
@@ -13,7 +11,7 @@ Sidebar mostra `Contas a pagar` apagado no grupo `Em breve`.
   antecipações `[5,3,1,0]` por conta, botão pagar/desmarcar.
 - **Endpoints (back):** `GET/POST /api/cobrancas`, `GET/PUT/DELETE
   /api/cobrancas/{id}`, `PATCH /api/cobrancas/{id}/pagar` e `/desmarcar-paga`.
-- **Tabelas:** `cobrancas` + `notificacoes` (ver SQL na spec).
+- **Tabelas:** `cobrancas` + `notificacoes`.
 - **Job:** diário 08:00 America/Sao_Paulo; idempotente por
   `(cobranca, dias_restantes, canal)`.
 - **Fases:** 1 = CRUD + dias restantes; 2 = job + e-mail + sino.
@@ -21,8 +19,7 @@ Sidebar mostra `Contas a pagar` apagado no grupo `Em breve`.
 
 ## 2. Notificações (sino + e-mail) — `futura`
 
-Parte das specs de cobranças e verificação; placeholder `Notificações` no
-`Em breve`.
+Placeholder `Notificações` no grupo `Em breve` da sidebar.
 
 - **Telas (front):** sino no header com não lidas primeiro, lista de avisos,
   preferências em `/configuracoes/notificacoes` (hoje só localStorage).
@@ -32,8 +29,7 @@ Parte das specs de cobranças e verificação; placeholder `Notificações` no
 
 ## 3. Verificação de e-mail, Fase 2 (back) — `futura`
 
-Fase 1 (front) entregue em 2026-10-10. Falta o back, detalhado em
-[`specs/2026-10-verificacao-email/spec.md`](../specs/2026-10-verificacao-email/spec.md).
+Fase 1 (front) entregue em 2026-10-10. Falta o back.
 
 - **Endpoints:** `POST /api/auth/verificacao/solicitar` (202),
   `POST /api/auth/verificacao/confirmar` (`{trocaToken}`, 10 min),

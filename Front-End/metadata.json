@@ -1,6 +1,0 @@
-{
-  "name": "Elo Front-End",
-  "description": "A premium, ultra-minimalist dark mode client management app MVP (Elo): landing page, authentication and dashboard for clientes and origens with manual entry.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

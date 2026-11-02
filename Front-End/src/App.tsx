@@ -14,7 +14,6 @@ import { ProfilePage } from './profile/ProfilePage'
 import { VerificarCodigoPage } from './profile/VerificarCodigoPage'
 import { RedefinirPage } from './profile/RedefinirPage'
 import { AuthPage } from './auth/AuthPage'
-import { LandingPage } from './landing/LandingPage'
 import { NotFoundPage } from './notfound/NotFoundPage'
 import { CrmProvider } from './crm/CrmContext'
 import { ClienteFormProvider } from './crm/ClienteFormContext'
@@ -75,7 +74,7 @@ function isTabPath(path: string): boolean {
 }
 
 function getPublicRoute() {
-  return PUBLIC_ROUTES[currentPath()] ?? 'landing'
+  return PUBLIC_ROUTES[currentPath()] ?? 'login'
 }
 
 /**
@@ -99,36 +98,25 @@ function PublicGate() {
     return () => window.removeEventListener('popstate', onChange)
   }, [])
 
-  // Caminho que nao e publico nem de aba volta para a raiz da landing.
+  // Sem login, qualquer caminho que nao seja /login ou /registro vira /login.
   useEffect(() => {
-    if (!user && route === 'landing' && currentPath() !== '/') {
-      history.replaceState(null, '', '/')
+    if (!user && !PUBLIC_ROUTES[currentPath()]) {
+      history.replaceState(null, '', '/login')
     }
   }, [route, user])
-
-  const goToLanding = () => {
-    history.pushState(null, '', '/')
-    setRoute('landing')
-  }
 
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <span className="h-8 w-8 animate-spin rounded-full border-2 border-amber-400/30 border-t-amber-400" />
+        <span className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-400/30 border-t-emerald-400" />
       </div>
     )
   }
   if (user) return <AuthenticatedApp />
-  if (route === 'login') {
-    return <AuthPage initialTab="login" onBack={goToLanding} />
-  }
   if (route === 'registro') {
-    return <AuthPage initialTab="register" onBack={goToLanding} />
+    return <AuthPage initialTab="register" />
   }
-  if (currentPath() !== '/' && !PUBLIC_ROUTES[currentPath()]) {
-    return <NotFoundPage onHome={goToLanding} />
-  }
-  return <LandingPage />
+  return <AuthPage initialTab="login" />
 }
 
 function AuthenticatedApp() {
@@ -240,7 +228,7 @@ function AuthenticatedApp() {
         <SidebarInset>
           <SiteHeader activeTab={activeTab} setActiveTab={setActiveTab} title={headerTitle} />
           <div className="flex-1 flex flex-col overflow-auto relative">
-            <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-amber-400/[0.05] blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-emerald-400/[0.05] blur-[120px] rounded-full pointer-events-none" />
             <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-white/[0.03] blur-[120px] rounded-full pointer-events-none" />
             <div className="flex-1 relative z-10">
               {!isTabPath(currentPath()) ? (
@@ -286,7 +274,7 @@ function AuthenticatedApp() {
         <DialogContent showCloseButton={false}>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-yellow-400" />
+              <Sparkles className="w-5 h-5 text-emerald-400" />
               Bem-vindo(a), {user?.name || 'usuário'}!
             </DialogTitle>
             <DialogDescription className="pt-1">

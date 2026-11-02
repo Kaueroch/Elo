@@ -1,11 +1,11 @@
 # Elo — Front-End
 
-Você roda landing, login e painel escuro. O front consome a API Spring Boot do monorepo.
+SPA do Elo: login e painel em tema escuro (preto e verde). Consome a API Spring Boot do monorepo.
 
 ## Interface
 
-### Landing Page + Autenticação
-Você apresenta o produto e cria conta. Você entra com login e abre o painel.
+### Autenticação
+Você cria conta ou entra. A raiz `/` abre o login.
 
 ### Dashboard
 Você vê total ganho, clientes do mês, ticket médio e ganhos por origem.
@@ -17,7 +17,7 @@ Você busca e filtra por origem e mês. Você adiciona, edita e apaga.
 Você cadastra e apaga origens como Indicação e Instagram.
 
 ### Configurações
-Você troca nome e senha e sai.
+Você troca nome e senha, gerencia origens, exporta CSV e sai.
 
 ## Stack Tecnológica
 
@@ -33,7 +33,7 @@ Você troca nome e senha e sai.
 
 ## Executando Localmente
 
-**Pré-requisitos:** Node.js (ou Docker, para a opção completa com backend + banco).
+**Pré-requisitos:** Node.js 20+ e a API rodando (ver o README da raiz).
 
 1. Instale as dependências:
    ```bash
@@ -43,12 +43,12 @@ Você troca nome e senha e sai.
    ```bash
    cp .env.example .env
    ```
-   Em dev, `VITE_PROXY_TARGET` aponta para o backend (padrão `http://localhost:8081`).
+   Em dev, `VITE_PROXY_TARGET` aponta para o backend (padrão `http://localhost:8080`).
 3. Inicie o servidor de desenvolvimento:
    ```bash
    npm run dev
    ```
-   Acesse `http://localhost:3000` (landing em `/`; login em `/login`; registro em `/registro`).
+   Acesse `http://localhost:3000` (login em `/login`, registro em `/registro`).
 
 ### Build de produção
 
@@ -66,9 +66,9 @@ npm run lint        # tsc --noEmit
 ### Docker
 
 ```bash
-# Do repositório raiz do monorepo (CRM_kauezao), com backend + banco:
-docker compose up --build -d
-# Frontend publicado em http://localhost:3000 (Nginx) e backend em http://localhost:8081
+docker build -t elo-front .
+docker run -p 3000:80 elo-front
+# O nginx do container repassa /api para backend:8080
 ```
 
 ## Scripts
@@ -84,7 +84,6 @@ docker compose up --build -d
 
 ```
 src/
-├── landing/          # Landing page (components + content)
 ├── auth/             # Login, registro e AuthContext
 ├── crm/              # CrmContext (clientes/origens) + ClienteFormContext
 ├── dashboard/        # Home do painel
@@ -99,7 +98,7 @@ src/
 
 | Rota | Acesso | Tela |
 |------|--------|------|
-| `/` | público | Landing page |
+| `/` | público | Redireciona para `/login` |
 | `/login` | público | Login |
 | `/registro` | público | Registro |
 | `/dashboard` | autenticado | Dashboard |
@@ -112,4 +111,4 @@ src/
 | Variável | Descrição | Padrão |
 |----------|-----------|--------|
 | `VITE_API_URL` | Base URL da API (build de produção) | `/api` (proxy do Nginx) |
-| `VITE_PROXY_TARGET` | Alvo do proxy em dev | `http://localhost:8081` |
+| `VITE_PROXY_TARGET` | Alvo do proxy em dev | `http://localhost:8080` |

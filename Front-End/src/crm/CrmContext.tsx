@@ -32,7 +32,7 @@ export function CrmProvider({ children }: CrmProviderProps) {
   const [error, setError] = useState<string | null>(null);
 
   // Carrega clientes e origens do back-end; nada fica preso no navegador.
-  // Sem token (landing, login, registro) nao se busca nada: a API so devolveria
+  // Sem token (login, registro) nao se busca nada: a API so devolveria
   // 401 "e preciso estar autenticado" e a tela publica nao usa esses dados.
   const recarregar = useCallback(async () => {
     if (!localStorage.getItem(TOKEN_STORAGE_KEY)) {

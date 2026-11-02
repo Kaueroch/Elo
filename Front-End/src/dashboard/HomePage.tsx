@@ -24,7 +24,7 @@ function DeltaLine({ value }: { value: number }) {
   const texto = `${value >= 0 ? '+' : ''}${value.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}%`
   return (
     <p className="text-xs text-muted-foreground">
-      <span className={`font-semibold ${value >= 0 ? 'text-amber-400' : 'text-red-400'}`}>{texto}</span>
+      <span className={`font-semibold ${value >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{texto}</span>
       {' '}em relação ao mês anterior
     </p>
   )
@@ -222,11 +222,11 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
       </div>
 
       {/* Faturamento hero + meta */}
-      <Card className="border-amber-400/20 bg-amber-400/[0.03] p-6">
+      <Card className="border-emerald-400/20 bg-emerald-400/[0.03] p-6">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <span className="text-[13px] font-medium text-muted-foreground">{verTodos ? 'Faturamento total' : 'Faturamento do mês'}</span>
-            <div className="mt-1 text-4xl font-bold leading-none tracking-tight tabular-nums text-amber-200 sm:text-[2.75rem]">
+            <div className="mt-1 text-4xl font-bold leading-none tracking-tight tabular-nums text-emerald-200 sm:text-[2.75rem]">
               {formatBRL(totalGanho)}
             </div>
             <div className="mt-2">
@@ -249,7 +249,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
               </p>
             </div>
           </div>
-          <span className="hidden h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-amber-400/20 bg-amber-400/10 text-amber-300 sm:flex">
+          <span className="hidden h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-emerald-400/20 bg-emerald-400/10 text-emerald-300 sm:flex">
             <Wallet className="h-7 w-7" />
           </span>
         </div>
