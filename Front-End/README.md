@@ -1,60 +1,60 @@
 # Elo — Front-End
 
-SPA do Elo: login e painel em tema escuro (preto e verde). Consome a API Spring Boot do monorepo.
+The Elo SPA: login and dashboard in a dark theme (black and green). It consumes the monorepo's Spring Boot API.
 
 ## Interface
 
-### Autenticação
-Você cria conta ou entra. A raiz `/` abre o login.
+### Authentication
+You create an account or sign in. The root `/` opens the login page.
 
 ### Dashboard
-Você vê total ganho, clientes do mês, ticket médio e ganhos por origem.
+You see total earnings, clients this month, average ticket and earnings by source.
 
-### Clientes
-Você busca e filtra por origem e mês. Você adiciona, edita e apaga.
+### Clients
+You search and filter by source and month. You add, edit and delete.
 
-### Origens
-Você cadastra e apaga origens como Indicação e Instagram.
+### Sources
+You register and delete sources such as Referral and Instagram.
 
-### Configurações
-Você troca nome e senha, gerencia origens, exporta CSV e sai.
+### Settings
+You change your name and password, manage sources, export CSV and sign out.
 
-## Stack Tecnológica
+## Tech Stack
 
-| Camada | Tecnologia |
+| Layer | Technology |
 |--------|-----------|
 | **UI** | React 19 + TypeScript |
 | **Build** | Vite 6 |
-| **Estilização** | Tailwind CSS 4 + shadcn/ui |
-| **Ícones** | Lucide React |
-| **Gráficos** | Recharts |
-| **Animações** | Motion (Framer Motion) |
-| **Fonte** | Geist Variable |
+| **Styling** | Tailwind CSS 4 + shadcn/ui |
+| **Icons** | Lucide React |
+| **Charts** | Recharts |
+| **Animations** | Motion (Framer Motion) |
+| **Font** | Geist Variable |
 
-## Executando Localmente
+## Running Locally
 
-**Pré-requisitos:** Node.js 20+ e a API rodando (ver o README da raiz).
+**Prerequisites:** Node.js 20+ and the API running (see the root README).
 
-1. Instale as dependências:
+1. Install the dependencies:
    ```bash
    npm install
    ```
-2. Configure o arquivo `.env` (utilize o `.env.example` como base):
+2. Set up the `.env` file (use `.env.example` as a base):
    ```bash
    cp .env.example .env
    ```
-   Em dev, `VITE_PROXY_TARGET` aponta para o backend (padrão `http://localhost:8080`).
-3. Inicie o servidor de desenvolvimento:
+   In dev, `VITE_PROXY_TARGET` points to the backend (default `http://localhost:8080`).
+3. Start the development server:
    ```bash
    npm run dev
    ```
-   Acesse `http://localhost:3000` (login em `/login`, registro em `/registro`).
+   Go to `http://localhost:3000` (login at `/login`, sign-up at `/registro`).
 
-### Build de produção
+### Production build
 
 ```bash
-npm run build       # gera a pasta dist/ (usa VITE_API_URL)
-npm run preview     # serve o build localmente
+npm run build       # generates the dist/ folder (uses VITE_API_URL)
+npm run preview     # serves the build locally
 ```
 
 ### Lint
@@ -65,51 +65,51 @@ npm run lint        # tsc --noEmit
 
 ### Docker
 
-Da raiz do monorepo, com banco e API juntos:
+From the monorepo root, with the database and API together:
 
 ```bash
 docker compose up -d --build
-# Front em http://localhost:3000; o nginx repassa /api para backend:8080
+# Front at http://localhost:3000; nginx forwards /api to backend:8080
 ```
 
 ## Scripts
 
-| Comando | Descrição |
+| Command | Description |
 |---------|-----------|
-| `npm run dev` | Dev server na porta 3000 (proxy `/api`) |
-| `npm run build` | Build de produção (Vite) |
-| `npm run preview` | Serve o build localmente |
+| `npm run dev` | Dev server on port 3000 (`/api` proxy) |
+| `npm run build` | Production build (Vite) |
+| `npm run preview` | Serves the build locally |
 | `npm run lint` | Type check (`tsc --noEmit`) |
 
-## Estrutura de pastas
+## Folder structure
 
 ```
 src/
-├── auth/             # Login, registro e AuthContext
-├── crm/              # CrmContext (clientes/origens) + ClienteFormContext
-├── dashboard/        # Home do painel
-├── clientes/         # Lista e formulário de clientes
-├── origens/          # CRUD de origens
-├── profile/          # Configurações do perfil
-├── layout/           # Sidebar e header do painel
-└── shared/           # Componentes, tipos, serviços e constantes
+├── auth/             # Login, sign-up and AuthContext
+├── crm/              # CrmContext (clients/sources) + ClienteFormContext
+├── dashboard/        # Dashboard home
+├── clientes/         # Client list and form
+├── origens/          # Sources CRUD
+├── profile/          # Profile settings
+├── layout/           # Dashboard sidebar and header
+└── shared/           # Components, types, services and constants
 ```
 
-## Rotas
+## Routes
 
-| Rota | Acesso | Tela |
+| Route | Access | Screen |
 |------|--------|------|
-| `/` | público | Redireciona para `/login` |
-| `/login` | público | Login |
-| `/registro` | público | Registro |
-| `/dashboard` | autenticado | Dashboard |
-| `/clientes` | autenticado | Clientes |
-| `/origens` | autenticado | Origens |
-| `/configuracoes` | autenticado | Configurações |
+| `/` | public | Redirects to `/login` |
+| `/login` | public | Login |
+| `/registro` | public | Sign-up |
+| `/dashboard` | authenticated | Dashboard |
+| `/clientes` | authenticated | Clients |
+| `/origens` | authenticated | Sources |
+| `/configuracoes` | authenticated | Settings |
 
-## Variáveis de ambiente
+## Environment variables
 
-| Variável | Descrição | Padrão |
+| Variable | Description | Default |
 |----------|-----------|--------|
-| `VITE_API_URL` | Base URL da API (build de produção) | `/api` (proxy do Nginx) |
-| `VITE_PROXY_TARGET` | Alvo do proxy em dev | `http://localhost:8080` |
+| `VITE_API_URL` | API base URL (production build) | `/api` (Nginx proxy) |
+| `VITE_PROXY_TARGET` | Proxy target in dev | `http://localhost:8080` |

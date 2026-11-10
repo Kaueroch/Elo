@@ -1,109 +1,110 @@
 # Elo
 
-Caderno de ganhos para quem trabalha por conta própria.
+An earnings notebook for people who work for themselves.
 
-Você atende, cobra e, no fim do mês, não sabe quanto entrou. O Elo anota
-cada atendimento e mostra o total no painel.
+You serve clients, you charge them and, at the end of the month, you don't
+know how much came in. Elo records each appointment and shows the total on
+the dashboard.
 
 ![Java](https://img.shields.io/badge/Java-17-10b981?style=flat-square&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.1-10b981?style=flat-square&logo=springboot&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-10b981?style=flat-square&logo=postgresql&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-10b981?style=flat-square&logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-10b981?style=flat-square&logo=typescript&logoColor=white)
-![License](https://img.shields.io/badge/licen%C3%A7a-MIT-10b981?style=flat-square)
+![License](https://img.shields.io/badge/license-MIT-10b981?style=flat-square)
 
-## Para quem é
+## Who it's for
 
-Cabeleireiro, manicure, diarista, técnico, freelancer. Quem cobra por
-serviço e não tem tempo para planilha.
+Hairdressers, manicurists, house cleaners, technicians, freelancers. Anyone
+who charges per service and has no time for spreadsheets.
 
-## O que faz
+## What it does
 
-- Anota o atendimento: nome, data, valor cobrado, trabalho feito e origem.
-- Mostra o faturamento do mês no painel, com comparação ao mês anterior.
-- Calcula ticket médio e mostra de onde vieram os clientes.
-- Filtra o painel por mês ou mostra o histórico todo.
-- Exporta os atendimentos em CSV.
-- Login com e-mail e senha (JWT). Cada usuário só vê os próprios dados.
+- Records each appointment: name, date, amount charged, work done and source.
+- Shows the month's revenue on the dashboard, compared to the previous month.
+- Calculates the average ticket and shows where clients came from.
+- Filters the dashboard by month or shows the full history.
+- Exports appointments as CSV.
+- Email and password login (JWT). Each user only sees their own data.
 
 ## Stack
 
-| Camada | Tecnologias |
+| Layer | Technologies |
 |--------|-------------|
 | Back-end | Java 17, Spring Boot 4.1, Spring Security, Spring Data JPA, Bean Validation |
 | Auth | JWT + BCrypt, stateless |
-| Banco | PostgreSQL |
+| Database | PostgreSQL |
 | Front-end | React 19, TypeScript, Vite 6, Tailwind CSS 4, shadcn/ui, Recharts |
-| Testes | JUnit 5, Mockito, MockMvc |
+| Tests | JUnit 5, Mockito, MockMvc |
 
-## Estrutura
+## Structure
 
 ```
 .
-├── Back-end/clientes/        # API REST (Spring Boot)
+├── Back-end/clientes/        # REST API (Spring Boot)
 │   └── src/main/java/com/CRM/clientes/
-│       ├── controllers/      # Endpoints REST
-│       ├── services/         # Regras de negócio
+│       ├── controllers/      # REST endpoints
+│       ├── services/         # Business rules
 │       ├── repository/       # Spring Data JPA
-│       ├── domain/           # Entidades
+│       ├── domain/           # Entities
 │       ├── dtos/             # Request / Response
-│       └── infra/            # Segurança, CORS, tratamento de erros
-└── Front-End/                # SPA React (ver Front-End/README.md)
+│       └── infra/            # Security, CORS, error handling
+└── Front-End/                # React SPA (see Front-End/README.md)
 ```
 
-## Como rodar
+## How to run
 
-### Com Docker (mais rápido)
+### With Docker (fastest)
 
-**Pré-requisito:** Docker com Compose.
+**Prerequisite:** Docker with Compose.
 
 ```bash
 cp .env.example .env
-# troque DB_PASSWORD e TOKEN_SECRET no .env
+# change DB_PASSWORD and TOKEN_SECRET in .env
 docker compose up -d --build
 ```
 
-| Serviço | Endereço |
+| Service | Address |
 |---------|----------|
 | Front-end | http://localhost:3000 |
 | API | http://localhost:8080 |
-| Banco | localhost:5433 |
+| Database | localhost:5433 |
 
-Para parar: `docker compose down` (os dados ficam no volume `elo_pgdata`;
-`docker compose down -v` apaga tudo).
+To stop: `docker compose down` (data stays in the `elo_pgdata` volume;
+`docker compose down -v` deletes everything).
 
-### Sem Docker
+### Without Docker
 
-**Pré-requisitos:** Java 17, Node.js 20+ e PostgreSQL rodando na porta 5432.
+**Prerequisites:** Java 17, Node.js 20+ and PostgreSQL running on port 5432.
 
-#### 1. Banco
+#### 1. Database
 
 ```sql
 CREATE DATABASE crm_kauezao;
 ```
 
-As tabelas são criadas pelo Hibernate na primeira subida. O schema de
-referência está em `Back-end/clientes/src/main/resources/db/schema_clientes.sql`.
+Hibernate creates the tables on the first startup. The reference schema is
+in `Back-end/clientes/src/main/resources/db/schema_clientes.sql`.
 
 #### 2. Back-end
 
-Crie o arquivo de config local com o usuário e a senha do seu Postgres
-(ele fica fora do git):
+Create the local config file with your Postgres username and password
+(it stays out of git):
 
 ```bash
 cd Back-end/clientes/src/main/resources
 cp application-local.yml.example application-local.yml
-# edite username e password
+# edit username and password
 ```
 
-Suba a API (ou rode `ClientesApplication` direto pela IDE):
+Start the API (or run `ClientesApplication` straight from the IDE):
 
 ```bash
 cd Back-end/clientes
 ./mvnw spring-boot:run
 ```
 
-A API sobe em `http://localhost:8080`. Teste com `GET /api/health`.
+The API starts at `http://localhost:8080`. Test it with `GET /api/health`.
 
 #### 3. Front-end
 
@@ -114,9 +115,9 @@ npm install
 npm run dev
 ```
 
-Abra `http://localhost:3000`. Em dev, o Vite repassa `/api` para a porta 8080.
+Open `http://localhost:3000`. In dev, Vite forwards `/api` to port 8080.
 
-### Testes
+### Tests
 
 ```bash
 cd Back-end/clientes && ./mvnw test
@@ -125,42 +126,42 @@ cd Front-End && npm run lint && npm run build
 
 ## API
 
-Todas as rotas, exceto `/api/auth/registro`, `/api/auth/login` e
-`/api/health`, exigem `Authorization: Bearer <token>`.
+All routes except `/api/auth/registro`, `/api/auth/login` and
+`/api/health` require `Authorization: Bearer <token>`.
 
-| Método | Rota | Descrição |
+| Method | Route | Description |
 |--------|------|-----------|
-| GET | `/api/health` | Status da API |
-| POST | `/api/auth/registro` | Criar conta |
-| POST | `/api/auth/login` | Entrar (retorna o token) |
-| GET, PUT | `/api/auth/perfil` | Ver ou atualizar perfil |
-| GET, POST | `/api/clientes` | Listar ou criar atendimentos |
-| GET, PUT, DELETE | `/api/clientes/{id}` | Ver, editar ou apagar um atendimento |
-| GET, POST | `/api/origens` | Listar ou criar origens |
-| DELETE | `/api/origens/{id}` | Apagar origem |
+| GET | `/api/health` | API status |
+| POST | `/api/auth/registro` | Create an account |
+| POST | `/api/auth/login` | Sign in (returns the token) |
+| GET, PUT | `/api/auth/perfil` | View or update the profile |
+| GET, POST | `/api/clientes` | List or create appointments |
+| GET, PUT, DELETE | `/api/clientes/{id}` | View, edit or delete an appointment |
+| GET, POST | `/api/origens` | List or create sources |
+| DELETE | `/api/origens/{id}` | Delete a source |
 
-Os erros seguem o mesmo formato:
+Errors all follow the same format:
 
 ```json
 { "timestamp": "...", "status": 400, "mensagem": "...", "campos": { "email": "..." } }
 ```
 
-`campos` diz qual input falhou, para o front marcar o campo certo.
+`campos` says which input failed, so the front-end can highlight the right field.
 
-## Produção
+## Production
 
-O `application.yml` lê variáveis de ambiente com padrões só para dev.
-Em produção defina pelo menos `DB_URL`, `DB_USER`, `DB_PASSWORD`,
-`TOKEN_SECRET` (forte), `CORS_ORIGINS` com seu domínio e, depois de criar
-sua conta, `REGISTRATION_ENABLED=false`. A lista completa está em
-[`.env.example`](.env.example). O `docker-compose.yml` sobe banco, API e front;
-cada módulo também tem um `Dockerfile` próprio.
+`application.yml` reads environment variables, with defaults meant only for dev.
+In production, set at least `DB_URL`, `DB_USER`, `DB_PASSWORD`,
+`TOKEN_SECRET` (strong), `CORS_ORIGINS` with your domain and, after creating
+your account, `REGISTRATION_ENABLED=false`. The full list is in
+[`.env.example`](.env.example). `docker-compose.yml` starts the database, API and front-end;
+each module also has its own `Dockerfile`.
 
-## Próximos passos
+## Next steps
 
-Contas a pagar com lembrete de vencimento, notificações e verificação de
-e-mail por código.
+Bills to pay with due-date reminders, notifications and email verification
+by code.
 
-## Licença
+## License
 
 [MIT](LICENSE)
